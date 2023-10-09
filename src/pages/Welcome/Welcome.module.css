@@ -21,7 +21,9 @@
 .image {
   margin: 46px 0 96px;
 }
-
+a {
+  text-decoration: none;
+}
 .button {
   display: flex;
   width: 345px;
@@ -42,3 +44,22 @@
   letter-spacing: -0.5px;
   text-transform: uppercase;
 }
+button:hover {
+  opacity: 0.8;
+  cursor: pointer;
+}
+.terms {
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  letter-spacing: -0.5px;
+  text-align: center;
+  color: #363636;
+  font-family: Nunito Sans;
+  margin: 20px 40px;
+}
+.terms b {
+  color: #e71e50;
+}
+

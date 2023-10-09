@@ -1,46 +1,75 @@
 import React from 'react'
-import style from './Login.module.css'
+import style from './SignUp.module.css'
+import { Link, useNavigate } from 'react-router-dom'
 import PasswordValidation from '../../constants/validation/PasswordValidation'
 import EmailValidation from '../../constants/validation/EmailValidation'
+import NameValidation from '../../constants/validation/NameValidation'
 import API from '../../constants/api/API'
-import { useNavigate } from 'react-router-dom'
-
-const Login = () => {
-  const [data, setData] = React.useState({ email: '', password: '' })
-  const [error, setError] = React.useState({ email: '', password: '', login: '' })
+const SignUp = () => {
+  const [data, setData] = React.useState({ name: '', password: '', confirm_password: '', email: '' })
+  const [error, setError] = React.useState({ name: '', password: '', confirm_password: '', email: '', signup: '' })
   let navigate = useNavigate()
   const handleChange = (e) => {
     setData({ ...data, [e.target.name]: e.target.value })
   }
   const validateForm = () => {
+    const name = data.name
     const email = data.email
     const password = data.password
     if (!EmailValidation(email)) {
       setError({ ...error, email: 'Invalid Email' })
       return false
+    } else {
+      setError({ ...error, email: '' })
     }
     if (!PasswordValidation(password)) {
-      setError({ ...error, password: 'Invalid Password' })
+      setError({
+        ...error,
+        password:
+          'Password must be at least 7 characters long and contain at least one upper case, one special character and one digit'
+      })
+      return false
+    } else {
+      setError({ ...error, password: '' })
+    }
+    if (!NameValidation(name)) {
+      setError({ ...error, name: 'Name must be at least 3 characters long' })
+      return false
+    } else {
+      setError({ ...error, name: '' })
+    }
+    if (!confirmPassword()) {
+      return false
+    } else {
+      setError({ ...error, confirm_password: '' })
+    }
+    return true
+  }
+  const confirmPassword = () => {
+    const password = data.password
+    const confirm_password = data.confirm_password
+    if (password !== confirm_password) {
+      setError({ ...error, confirm_password: 'Password does not match' })
       return false
     }
     return true
   }
-  const handleSumit = (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault()
     if (validateForm()) {
       setError('')
       const data_json = {
-        email: data.email,
-        password: data.password
+        name: data.name,
+        password: data.password,
+        email: data.email
       }
-      API.post('/user/login', data_json)
+      API.post('/user/register', data_json)
         .then((res) => {
-          res.status === 200
-            ? navigate('/')
-            : setError({ ...error, login: 'Email or Password is incorrect. Please try again.' })
+          res.status === 200 && navigate('/login')
           console.log(res)
         })
         .catch((err) => {
+          setError({ ...error, signup: err.response.data.message })
           console.log(err)
         })
     }
@@ -48,23 +77,17 @@ const Login = () => {
   return (
     <div className={style.page}>
       <div className={style.container}>
-        <img
-          src='https://res.cloudinary.com/de59jbjlb/image/upload/v1696598738/login_beug6j.png'
-          alt=''
-          className={style.image}
-        />
-
-        <form className={style.form} onSubmit={handleSumit}>
-          <h2 className={style.form__header}>Login Details</h2>
+        <form className={style.form} method='post' onSubmit={handleSubmit}>
+          <h2 className={style.form__header}>Sign Up</h2>
           <input
-            type='email'
-            name='email'
+            type='text'
+            name='name'
             className={style.form__username}
-            placeholder='Username, email, phone number'
+            placeholder='Name'
             onChange={handleChange}
             required
           />
-          <p className={style.form__error}>{error.email}</p>
+          <p className={style.form__error}>{error.name}</p>
           <input
             type='password'
             name='password'
@@ -74,18 +97,37 @@ const Login = () => {
             required
           />
           <p className={style.form__error}>{error.password}</p>
-          <p className={style.form__link}>Forgot Password ?</p>
-          <p className={style.form__error}>{error.login}</p>
+          <input
+            type='password'
+            name='confirm_password'
+            className={style.form__password}
+            placeholder='Confirm Password'
+            onChange={handleChange}
+            required
+          />
+          <p className={style.form__error}>{error.confirm_password}</p>
+          <input
+            type='email'
+            name='email'
+            className={style.form__email}
+            placeholder='Email'
+            onChange={handleChange}
+            required
+          />
+          <p className={style.form__error}>{error.email}</p>
+          <p className={style.form__link}>
+            Already have an account ? <Link to='/login'>Login</Link>
+          </p>
           <button type='submit' name='submit' className={style.form__button}>
-            Login
+            Sign Up
           </button>
+          <p className={style.form__error}>{error.signup}</p>
         </form>
         <div className={style.signup__container}>
           <span className={style.signup__text__line}></span>
           <p className={style.signup__text}>Or signup with</p>
           <span className={style.signup__text__line}></span>
         </div>
-
         <div className={style.signup__container__link}>
           <a className={style.signup__link} href='https://www.google.com/'>
             <img
@@ -110,12 +152,11 @@ const Login = () => {
           </a>
         </div>
       </div>
-
       <div className={style.custom_shape_divider_bottom_1696784648}>
         <svg data-name='Layer 1' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'>
           <path
-            d='M985.66,92.83C906.67,72,823.78,31,743.84,14.19c-82.26-17.34-168.06-16.33-250.45.39-57.84,11.73-114,31.07-172,41.86A600.21,600.21,0,0,1,0,27.35V120H1200V95.8C1132.19,118.92,1055.71,111.31,985.66,92.83Z'
             className={style.shape_fill}
+            d='M985.66,92.83C906.67,72,823.78,31,743.84,14.19c-82.26-17.34-168.06-16.33-250.45.39-57.84,11.73-114,31.07-172,41.86A600.21,600.21,0,0,1,0,27.35V120H1200V95.8C1132.19,118.92,1055.71,111.31,985.66,92.83Z'
           ></path>
         </svg>
       </div>
@@ -123,4 +164,4 @@ const Login = () => {
   )
 }
 
-export default Login
+export default SignUp

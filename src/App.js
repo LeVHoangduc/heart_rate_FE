@@ -1,14 +1,12 @@
 // App.jsx
 import React from 'react'
 import { Routes, Route } from 'react-router-dom'
-import LoginComponent from './LoginComponent'
-import RegisterComponent from './RegisterComponent'
+import Login from './pages/Login/Login'
 
 const App = () => {
   return (
     <Routes>
-      <Route path='/login' element={<LoginComponent />} />
-      <Route path='/register' element={<RegisterComponent />} />
+      <Route path='/login' element={<Login />} />
     </Routes>
   )
 }

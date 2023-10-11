@@ -25,7 +25,7 @@ const SignUp = () => {
         error[field.field] = field.message
       }
     })
-    if (confirmPassword() === false) {
+    if (!confirmPassword()) {
       isValid = false
       error.confirm_password = 'Password does not match'
     }

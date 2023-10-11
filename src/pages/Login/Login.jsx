@@ -4,7 +4,7 @@ import style from './Login.module.css'
 import PasswordValidation from '../../constants/validation/PasswordValidation'
 import EmailValidation from '../../constants/validation/EmailValidation'
 import API from '../../constants/api/API'
-import {Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import ValidationLogin from '../../constants/validation/validationForm'
 
 const Login = () => {
@@ -14,10 +14,29 @@ const Login = () => {
   const handleChange = (e) => {
     setData({ ...data, [e.target.name]: e.target.value })
   }
-  console.log(ValidationLogin(data))
+
+  isValidation = (inputs) => {
+    let isValid = true
+
+    inputs.forEach(input => {
+
+      if (input.isValid) setError("")
+      else {
+        setError("")
+
+        isValid = false
+      }
+    })
+
+    return isValid
+  }
+
   const handleSumit = (e) => {
     e.preventDefault()
-    if (ValidationLogin(data).length > 0) {
+    const inputCheck = ValidationLogin(data)
+    const isValidation = isValidation(inputCheck)
+
+    if (isValidation) {
       setError('')
       const data_json = {
         email: data.email,
@@ -39,12 +58,12 @@ const Login = () => {
   return (
     <div className={style.page}>
       <div className={style.container}>
-    <div className={style.image}>
-    <img
-          src='https://res.cloudinary.com/de59jbjlb/image/upload/v1696598738/login_beug6j.png'
-          alt=''
-        />
-    </div>
+        <div className={style.image}>
+          <img
+            src='https://res.cloudinary.com/de59jbjlb/image/upload/v1696598738/login_beug6j.png'
+            alt=''
+          />
+        </div>
 
         <form className={style.form} onSubmit={handleSumit} noValidate>
           <h2 className={style.form__header}>Login Details</h2>
@@ -71,7 +90,7 @@ const Login = () => {
           <button type='submit' name='submit' className={style.form__button}>
             Login
           </button>
-        </form> 
+        </form>
       </div>
 
       <div className={style.custom_shape_divider_bottom_1696784648}>

@@ -1,9 +1,11 @@
+/* eslint-disable prettier/prettier */
 import React from 'react'
 import style from './Login.module.css'
 import PasswordValidation from '../../constants/validation/PasswordValidation'
 import EmailValidation from '../../constants/validation/EmailValidation'
 import API from '../../constants/api/API'
-import { useNavigate } from 'react-router-dom'
+import {Link, useNavigate } from 'react-router-dom'
+import ValidationLogin from '../../constants/validation/validationForm'
 
 const Login = () => {
   const [data, setData] = React.useState({ email: '', password: '' })
@@ -12,22 +14,10 @@ const Login = () => {
   const handleChange = (e) => {
     setData({ ...data, [e.target.name]: e.target.value })
   }
-  const validateForm = () => {
-    const email = data.email
-    const password = data.password
-    if (!EmailValidation(email)) {
-      setError({ ...error, email: 'Invalid Email' })
-      return false
-    }
-    if (!PasswordValidation(password)) {
-      setError({ ...error, password: 'Invalid Password' })
-      return false
-    }
-    return true
-  }
+  console.log(ValidationLogin(data))
   const handleSumit = (e) => {
     e.preventDefault()
-    if (validateForm()) {
+    if (ValidationLogin(data).length > 0) {
       setError('')
       const data_json = {
         email: data.email,
@@ -45,22 +35,24 @@ const Login = () => {
         })
     }
   }
+
   return (
     <div className={style.page}>
       <div className={style.container}>
-        <img
+    <div className={style.image}>
+    <img
           src='https://res.cloudinary.com/de59jbjlb/image/upload/v1696598738/login_beug6j.png'
           alt=''
-          className={style.image}
         />
+    </div>
 
-        <form className={style.form} onSubmit={handleSumit}>
+        <form className={style.form} onSubmit={handleSumit} noValidate>
           <h2 className={style.form__header}>Login Details</h2>
           <input
             type='email'
             name='email'
             className={style.form__username}
-            placeholder='Username, email, phone number'
+            placeholder='Username, email & phone number'
             onChange={handleChange}
             required
           />
@@ -74,41 +66,12 @@ const Login = () => {
             required
           />
           <p className={style.form__error}>{error.password}</p>
-          <p className={style.form__link}>Forgot Password ?</p>
+          <p className={style.form__link}>Forgot Password ? <span>or <Link to='/signup'>Sign Up</Link></span></p>
           <p className={style.form__error}>{error.login}</p>
           <button type='submit' name='submit' className={style.form__button}>
             Login
           </button>
-        </form>
-        <div className={style.signup__container}>
-          <span className={style.signup__text__line}></span>
-          <p className={style.signup__text}>Or signup with</p>
-          <span className={style.signup__text__line}></span>
-        </div>
-
-        <div className={style.signup__container__link}>
-          <a className={style.signup__link} href='https://www.google.com/'>
-            <img
-              src='https://storage.googleapis.com/support-kms-prod/ZAl1gIwyUsvfwxoW9ns47iJFioHXODBbIkrK'
-              alt=''
-              className={style.signup__image}
-            />
-          </a>
-          <a className={style.signup__link} href='https://www.facebook.com/'>
-            <img
-              src='https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Facebook_Logo_%282019%29.png/1200px-Facebook_Logo_%282019%29.png'
-              alt=''
-              className={style.signup__image}
-            />
-          </a>
-          <a className={style.signup__link} href='https://www.apple.com/'>
-            <img
-              src='https://yt3.googleusercontent.com/WoDkWmAjQ5Dbw-ccjqFku8ThK2UYcqaOqq25PBE9eGb_S-vsqxiKU2kL2kZJVz_BcAMv3WUWsA=s900-c-k-c0x00ffffff-no-rj'
-              alt=''
-              className={style.signup__image}
-            />
-          </a>
-        </div>
+        </form> 
       </div>
 
       <div className={style.custom_shape_divider_bottom_1696784648}>

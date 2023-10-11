@@ -5,13 +5,16 @@ import PasswordValidation from '../../constants/validation/PasswordValidation'
 import EmailValidation from '../../constants/validation/EmailValidation'
 import NameValidation from '../../constants/validation/NameValidation'
 import API from '../../constants/api/API'
+
 const SignUp = () => {
   const [data, setData] = React.useState({ name: '', password: '', confirm_password: '', email: '' })
   const [error, setError] = React.useState({ name: '', password: '', confirm_password: '', email: '', signup: '' })
+
   let navigate = useNavigate()
   const handleChange = (e) => {
     setData({ ...data, [e.target.name]: e.target.value })
   }
+
   const validateForm = () => {
     const name = data.name
     const email = data.email
@@ -74,10 +77,11 @@ const SignUp = () => {
         })
     }
   }
+
   return (
     <div className={style.page}>
       <div className={style.container}>
-        <form className={style.form} method='post' onSubmit={handleSubmit}>
+        <form className={style.form} method='post' onSubmit={handleSubmit} noValidate>
           <h2 className={style.form__header}>Sign Up</h2>
           <input
             type='text'
@@ -123,34 +127,6 @@ const SignUp = () => {
           </button>
           <p className={style.form__error}>{error.signup}</p>
         </form>
-        <div className={style.signup__container}>
-          <span className={style.signup__text__line}></span>
-          <p className={style.signup__text}>Or signup with</p>
-          <span className={style.signup__text__line}></span>
-        </div>
-        <div className={style.signup__container__link}>
-          <a className={style.signup__link} href='https://www.google.com/'>
-            <img
-              src='https://storage.googleapis.com/support-kms-prod/ZAl1gIwyUsvfwxoW9ns47iJFioHXODBbIkrK'
-              alt=''
-              className={style.signup__image}
-            />
-          </a>
-          <a className={style.signup__link} href='https://www.facebook.com/'>
-            <img
-              src='https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Facebook_Logo_%282019%29.png/1200px-Facebook_Logo_%282019%29.png'
-              alt=''
-              className={style.signup__image}
-            />
-          </a>
-          <a className={style.signup__link} href='https://www.apple.com/'>
-            <img
-              src='https://yt3.googleusercontent.com/WoDkWmAjQ5Dbw-ccjqFku8ThK2UYcqaOqq25PBE9eGb_S-vsqxiKU2kL2kZJVz_BcAMv3WUWsA=s900-c-k-c0x00ffffff-no-rj'
-              alt=''
-              className={style.signup__image}
-            />
-          </a>
-        </div>
       </div>
       <div className={style.custom_shape_divider_bottom_1696784648}>
         <svg data-name='Layer 1' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'>

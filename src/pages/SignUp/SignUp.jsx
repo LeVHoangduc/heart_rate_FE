@@ -1,9 +1,6 @@
 import React from 'react'
 import style from './SignUp.module.css'
 import { Link, useNavigate } from 'react-router-dom'
-import PasswordValidation from '../../constants/validation/PasswordValidation'
-import EmailValidation from '../../constants/validation/EmailValidation'
-import NameValidation from '../../constants/validation/NameValidation'
 import API from '../../constants/api/API'
 import { ValidationRegister } from '../../constants/validation/validationForm'
 

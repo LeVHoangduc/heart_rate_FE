@@ -5,6 +5,7 @@ import PasswordValidation from '../../constants/validation/PasswordValidation'
 import EmailValidation from '../../constants/validation/EmailValidation'
 import NameValidation from '../../constants/validation/NameValidation'
 import API from '../../constants/api/API'
+import { ValidationRegister } from '../../constants/validation/validationForm'
 
 const SignUp = () => {
   const [data, setData] = React.useState({ name: '', password: '', confirm_password: '', email: '' })
@@ -15,39 +16,23 @@ const SignUp = () => {
     setData({ ...data, [e.target.name]: e.target.value })
   }
 
-  const validateForm = () => {
-    const name = data.name
-    const email = data.email
-    const password = data.password
-    if (!EmailValidation(email)) {
-      setError({ ...error, email: 'Invalid Email' })
-      return false
-    } else {
-      setError({ ...error, email: '' })
+  const isValidation = (fields) => {
+    let isValid = true
+    let error = {}
+    fields.forEach((field) => {
+      if (!field.isValid) {
+        isValid = false
+        error[field.field] = field.message
+      }
+    })
+    if (confirmPassword() === false) {
+      isValid = false
+      error.confirm_password = 'Password does not match'
     }
-    if (!PasswordValidation(password)) {
-      setError({
-        ...error,
-        password:
-          'Password must be at least 7 characters long and contain at least one upper case, one special character and one digit'
-      })
-      return false
-    } else {
-      setError({ ...error, password: '' })
-    }
-    if (!NameValidation(name)) {
-      setError({ ...error, name: 'Name must be at least 3 characters long' })
-      return false
-    } else {
-      setError({ ...error, name: '' })
-    }
-    if (!confirmPassword()) {
-      return false
-    } else {
-      setError({ ...error, confirm_password: '' })
-    }
-    return true
+    setError(error)
+    return isValid
   }
+
   const confirmPassword = () => {
     const password = data.password
     const confirm_password = data.confirm_password
@@ -59,7 +44,8 @@ const SignUp = () => {
   }
   const handleSubmit = (e) => {
     e.preventDefault()
-    if (validateForm()) {
+    const fieldCheck = ValidationRegister(data)
+    if (isValidation(fieldCheck)) {
       setError('')
       const data_json = {
         name: data.name,

@@ -1,42 +1,37 @@
 /* eslint-disable prettier/prettier */
 import React from 'react'
 import style from './Login.module.css'
-import PasswordValidation from '../../constants/validation/PasswordValidation'
-import EmailValidation from '../../constants/validation/EmailValidation'
 import API from '../../constants/api/API'
 import { Link, useNavigate } from 'react-router-dom'
-import ValidationLogin from '../../constants/validation/validationForm'
+import { ValidationLogin } from '../../constants/validation/validationForm'
 
 const Login = () => {
   const [data, setData] = React.useState({ email: '', password: '' })
-  const [error, setError] = React.useState({ email: '', password: '', login: '' })
+  const [error, setError] = React.useState({email: '', password: '', login: ''})
+
   let navigate = useNavigate()
   const handleChange = (e) => {
     setData({ ...data, [e.target.name]: e.target.value })
   }
 
-  isValidation = (inputs) => {
+  const isValidation = (fields) => {
     let isValid = true
-
-    inputs.forEach(input => {
-
-      if (input.isValid) setError("")
-      else {
-        setError("")
-
+    let error = {}
+    fields.forEach((field) => {
+      if (!field.isValid) {
         isValid = false
+        error[field.field] = field.message
       }
     })
-
+    setError(error)
     return isValid
   }
 
   const handleSumit = (e) => {
     e.preventDefault()
-    const inputCheck = ValidationLogin(data)
-    const isValidation = isValidation(inputCheck)
-
-    if (isValidation) {
+    const fieldCheck = ValidationLogin(data)
+    
+    if (isValidation(fieldCheck)) {
       setError('')
       const data_json = {
         email: data.email,
@@ -46,7 +41,7 @@ const Login = () => {
         .then((res) => {
           res.status === 200
             ? navigate('/')
-            : setError({ ...error, login: 'Email or Password is incorrect. Please try again.' })
+            : setError({ login: res.data.message })
           console.log(res)
         })
         .catch((err) => {

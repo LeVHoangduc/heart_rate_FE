@@ -1,53 +1,99 @@
 /* eslint-disable prettier/prettier */
 import PasswordValidation from "./PasswordValidation"
 import EmailValidation from "./EmailValidation"
-const ValidationLogin = (data) => {
-    let fieldCheck = []
-
-    const userCheck = {
-        email: data.email,
-        password: data.password,
-    }
-
-    for (const key in userCheck) {
-        const value = userCheck[key]
-
-        let isValidField = true
-        let messageRequired = ""
-        let messageInvalid = ""
-
-        if (key === "email") {
-            isValidField = EmailValidation(value)
-            messageRequired = "email required"
-            messageInvalid = "email invalid"
+import NameValidation from "./NameValidation"
+const fieldValidators = {
+    email: {
+        validate: value => EmailValidation(value),
+        messages: {
+            required: "Email required",
+            invalid: "Email invalid",
+            rule: "Email must be a valid email address"
         }
-        if (key === "password") {
-            isValidField = PasswordValidation(value)
-            messageRequired = "password required"
-            messageInvalid = "password invalid"
+    },
+    password: {
+        validate: value => PasswordValidation(value),
+        messages: {
+            required: "Password required",
+            invalid: "Password invalid",
+            rule: "Password must be at least 8 characters long, contain at least 1 uppercase letter, 1 lowercase letter, 1 number, and 1 special character"
         }
-
-        if (value.trim() === "") {
-            fieldCheck.push({
-                field: key,
-                isValid: false,
-                message: messageRequired,
-            })
-        } else if (!isValidField) {
-            fieldCheck.push({
-                field: key,
-                isValid: false,
-                message: messageInvalid,
-            })
-        } else {
-            fieldCheck.push({
-                field: key,
-                isValid: true,
-            })
+    },
+    name: {
+        validate: value => NameValidation(value),
+        messages: {
+            required: "Name required",
+            invalid: "Name invalid",
+            rule: "Name invalid. Ex: John Doe"
         }
     }
+};
+export const ValidationLogin = (data) => {
+    let fieldCheck = [];
 
-    return fieldCheck
-}
+    const fieldsToCheck = ['email', 'password'];
 
-export default ValidationLogin
+    for (const key of fieldsToCheck) {
+        if (Object.prototype.hasOwnProperty.call(data, key)) {
+            const value = data[key];
+            const { validate, messages } = fieldValidators[key];
+
+            let isValidField = validate(value);
+
+            if (value.trim() === "") {
+                fieldCheck.push({
+                    field: key,
+                    isValid: false,
+                    message: messages.required,
+                });
+            } else if (!isValidField) {
+                fieldCheck.push({
+                    field: key,
+                    isValid: false,
+                    message: messages.invalid,
+                });
+            } else {
+                fieldCheck.push({
+                    field: key,
+                    isValid: true,
+                });
+            }
+        }
+    }
+
+    return fieldCheck;
+};
+
+export const ValidationRegister = (data) => {
+    let fieldCheck = [];
+
+    for (const key in fieldValidators) {
+        if (Object.prototype.hasOwnProperty.call(data, key)) {
+            const value = data[key];
+            const { validate, messages } = fieldValidators[key];
+
+            let isValidField = validate(value);
+
+            if (value.trim() === "") {
+                fieldCheck.push({
+                    field: key,
+                    isValid: false,
+                    message: messages.required,
+                });
+            } else if (!isValidField) {
+                fieldCheck.push({
+                    field: key,
+                    isValid: false,
+                    message: messages.rule,
+                });
+            } else {
+                fieldCheck.push({
+                    field: key,
+                    isValid: true,
+                });
+            }
+        }
+    }
+
+    return fieldCheck;
+};

@@ -15,7 +15,6 @@ const SignUp = () => {
     setData({ ...data, [e.target.name]: e.target.value })
   }
 
-
   const isValidation = (fields) => {
     let isValid = true
     let error = {}
@@ -26,10 +25,6 @@ const SignUp = () => {
         error[field.field] = field.message
       }
     })
-    if (!confirmPassword()) {
-      isValid = false
-      error.confirm_password = 'Password does not match'
-    }
     setError(error)
 
     return isValid

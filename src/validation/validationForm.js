@@ -3,7 +3,6 @@ import { Regex } from "../constants/regex";
 import { Message } from "../constants/messages";
 import { Field } from "../constants/fields";
 
-
 export const ValidationLogin = (userData) => {
     let fieldCheck = []
 

@@ -26,6 +26,10 @@ const SignUp = () => {
       isValid = false
       error.confirm_password = 'Password does not match'
     }
+    if (data.confirm_password === '') {
+      isValid = false
+      error.confirm_password = 'Confirm Password is required'
+    }
     setError(error)
     return isValid
   }

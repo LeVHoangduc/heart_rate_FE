@@ -3,13 +3,14 @@ import React from 'react'
 import style from './Login.module.css'
 import API from '../../constants/api/API'
 import { Link, useNavigate } from 'react-router-dom'
-import { ValidationLogin } from '../../constants/validation/validationForm'
+import { ValidationLogin } from '../../validation/validationForm'
 
 const Login = () => {
   const [data, setData] = React.useState({ email: '', password: '' })
-  const [error, setError] = React.useState({email: '', password: '', login: ''})
+  const [error, setError] = React.useState({ email: '', password: '', login: '' })
 
   let navigate = useNavigate()
+
   const handleChange = (e) => {
     setData({ ...data, [e.target.name]: e.target.value })
   }
@@ -27,10 +28,10 @@ const Login = () => {
     return isValid
   }
 
-  const handleSumit = (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault()
     const fieldCheck = ValidationLogin(data)
-    
+
     if (isValidation(fieldCheck)) {
       setError('')
       const data_json = {
@@ -60,7 +61,7 @@ const Login = () => {
           />
         </div>
 
-        <form className={style.form} onSubmit={handleSumit} noValidate>
+        <form className={style.form} onSubmit={handleSubmit} noValidate>
           <h2 className={style.form__header}>Login Details</h2>
           <input
             type='email'

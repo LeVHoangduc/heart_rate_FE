@@ -1,21 +1,25 @@
+/* eslint-disable prettier/prettier */
 import React from 'react'
 import style from './SignUp.module.css'
 import { Link, useNavigate } from 'react-router-dom'
 import API from '../../constants/api/API'
-import { ValidationRegister } from '../../constants/validation/validationForm'
+import { ValidationRegister } from '../../validation/validationForm'
 
 const SignUp = () => {
-  const [data, setData] = React.useState({ name: '', password: '', confirm_password: '', email: '' })
-  const [error, setError] = React.useState({ name: '', password: '', confirm_password: '', email: '', signup: '' })
+  const [data, setData] = React.useState({ username: '', password: '', confirmPassword: '', email: '' })
+  const [error, setError] = React.useState({ username: '', password: '', confirmPassword: '', email: '', signup: '' })
 
   let navigate = useNavigate()
+
   const handleChange = (e) => {
     setData({ ...data, [e.target.name]: e.target.value })
   }
 
+
   const isValidation = (fields) => {
     let isValid = true
     let error = {}
+
     fields.forEach((field) => {
       if (!field.isValid) {
         isValid = false
@@ -26,33 +30,25 @@ const SignUp = () => {
       isValid = false
       error.confirm_password = 'Password does not match'
     }
-    if (data.confirm_password === '') {
-      isValid = false
-      error.confirm_password = 'Confirm Password is required'
-    }
     setError(error)
+
     return isValid
   }
 
-  const confirmPassword = () => {
-    const password = data.password
-    const confirm_password = data.confirm_password
-    if (password !== confirm_password) {
-      setError({ ...error, confirm_password: 'Password does not match' })
-      return false
-    }
-    return true
-  }
+
   const handleSubmit = (e) => {
     e.preventDefault()
     const fieldCheck = ValidationRegister(data)
+
+
     if (isValidation(fieldCheck)) {
       setError('')
       const data_json = {
-        name: data.name,
+        username: data.username,
         password: data.password,
         email: data.email
       }
+
       API.post('/user/register', data_json)
         .then((res) => {
           res.status === 200 && navigate('/login')
@@ -72,13 +68,13 @@ const SignUp = () => {
           <h2 className={style.form__header}>Sign Up</h2>
           <input
             type='text'
-            name='name'
+            name='username'
             className={style.form__username}
-            placeholder='Name'
+            placeholder='username'
             onChange={handleChange}
             required
           />
-          <p className={style.form__error}>{error.name}</p>
+          <p className={style.form__error}>{error.username}</p>
           <input
             type='password'
             name='password'
@@ -90,13 +86,13 @@ const SignUp = () => {
           <p className={style.form__error}>{error.password}</p>
           <input
             type='password'
-            name='confirm_password'
+            name='confirmPassword'
             className={style.form__password}
             placeholder='Confirm Password'
             onChange={handleChange}
             required
           />
-          <p className={style.form__error}>{error.confirm_password}</p>
+          <p className={style.form__error}>{error.confirmPassword}</p>
           <input
             type='email'
             name='email'

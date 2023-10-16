@@ -65,7 +65,7 @@ const SignUp = () => {
             type='text'
             name='username'
             className={style.form__username}
-            placeholder='username'
+            placeholder='Username'
             onChange={handleChange}
             required
           />

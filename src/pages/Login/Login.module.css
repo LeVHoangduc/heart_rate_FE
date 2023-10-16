@@ -14,7 +14,6 @@
 .image {
   display: flex;
   justify-content: center;
-
   min-width: 85%;
   min-height: 187px;
   padding-top: 35px;

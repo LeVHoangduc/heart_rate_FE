@@ -87,8 +87,8 @@ const Login = () => {
             Login
           </button>
         </form>
-      </div>
 
+      </div>
       <div className={style.custom_shape_divider_bottom_1696784648}>
         <svg data-name='Layer 1' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'>
           <path
@@ -97,6 +97,7 @@ const Login = () => {
           ></path>
         </svg>
       </div>
+
     </div>
   )
 }

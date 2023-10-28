@@ -1,9 +1,14 @@
-import React, { useRef, useEffect } from 'react'
+import React, { useRef, useEffect, useState } from 'react'
+
 import * as faceapi from 'face-api.js'
-function FaceDetectionComponent(props) {
-  let style = props.style
+import VideoCamera from './VideoCamera/VideoCamera'
+
+function FaceDetectionComponent() {
+  const [errorState, setErrorState] = useState(false)
+
   const videoRef = useRef(null)
   const MODEL_URL = '/models'
+
   async function getCameraStream() {
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
       try {
@@ -19,28 +24,26 @@ function FaceDetectionComponent(props) {
       console.log('getUserMedia not supported')
     }
   }
-  Promise.all([
-    faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL),
-    faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL),
-    faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
-    faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL)
-  ]).then(getCameraStream)
+
+  async function getApiCamera() {
+    await faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL);
+    await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);
+
+    await getCameraStream();
+  }
+
   const handlePlaying = () => {
-    const canvas = faceapi.createCanvasFromMedia(videoRef.current)
-    document.getElementById('video_camera').append(canvas)
-    const displaySize = { width: videoRef.current.width, height: videoRef.current.height }
-    faceapi.matchDimensions(canvas, displaySize)
     setInterval(async () => {
       const detections = await faceapi
         .detectAllFaces(videoRef.current, new faceapi.TinyFaceDetectorOptions())
-        .withFaceLandmarks()
-        .withFaceExpressions()
-      const resizedDetections = faceapi.resizeResults(detections, displaySize)
-      canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height)
-      faceapi.draw.drawDetections(canvas, resizedDetections)
-      faceapi.draw.drawFaceExpressions(canvas, resizedDetections)
-    }, 100)
+      console.log(detections)
+      if (detections.length !== 0)
+        setErrorState(false)
+      else
+        setErrorState(true)
+    }, 1000)
   }
+
   useEffect(() => {
     if (videoRef.current) {
       videoRef.current.addEventListener('play', handlePlaying)
@@ -53,12 +56,15 @@ function FaceDetectionComponent(props) {
     }
   }, [])
 
+  useEffect(() => {
+    getApiCamera()
+    console.log("call again api")
+  })
+
   return (
-    <div id='video_camera' className={style.video_camera}>
-      <video id='videoElement' ref={videoRef} autoPlay={true} muted={true} width={980} height={600}>
-        <track kind='captions' />
-      </video>
-    </div>
+    <>
+      <VideoCamera errorState={errorState} videoRef={videoRef} />
+    </>
   )
 }
 

@@ -1,8 +1,8 @@
 import React from 'react'
 import style from './LoadResult.module.css'
 import { Link } from 'react-router-dom'
-import ProgressBar from '@ramonak/react-progress-bar'
 import FaceDetectionComponent from '../../components/FaceDetection'
+
 const LoadResult = () => {
   return (
     <div className={style.page}>
@@ -21,17 +21,6 @@ const LoadResult = () => {
             </div>
           </div>
           <FaceDetectionComponent style={style} />
-          <ProgressBar
-            completed={100}
-            maxCompleted={100}
-            height='25px'
-            bgColor='#e71e50'
-            isLabelVisible={false}
-            animateOnRender={true}
-            initCompletedOnAnimation={10}
-            transitionDuration='20s'
-          />
-          <h3>We are analizing your measurement</h3>
         </div>
       </div>
     </div>

@@ -1,12 +1,15 @@
+/* eslint-disable prettier/prettier */
 import React from 'react'
-import Welcome from './pages/Welcome/Welcome'
+import PropTypes from 'prop-types'
 
-const App = () => {
+const App = ({ children }) => {
+  App.propTypes = {
+    children: PropTypes.node.isRequired
+  }
   return (
-    <>
-      <Welcome />
-    </>
+    <div>
+      {children}
+    </div>
   )
 }
-
 export default App

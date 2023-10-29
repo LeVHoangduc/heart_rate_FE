@@ -106,7 +106,7 @@ const SignUp = () => {
           <p className={style.form__error}>{error.signup}</p>
         </form>
       </div>
-      <div className={style.custom_shape_divider_bottom_1696784648}>
+      <div className={style.decoration}>
         <svg data-name='Layer 1' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'>
           <path
             className={style.shape_fill}

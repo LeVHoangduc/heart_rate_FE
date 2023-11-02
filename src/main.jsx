@@ -8,6 +8,8 @@ import Login from './pages/Login/Login.jsx'
 import SignUp from './pages/SignUp/SignUp.jsx'
 import AddData from './pages/AddData/AddData.jsx'
 import LoadResult from './pages/LoadResult/LoadResult.jsx'
+import ListResult from './pages/Result/ListResult.jsx'
+
 
 const rootElement = document.getElementById('root')
 if (rootElement) {
@@ -20,7 +22,8 @@ if (rootElement) {
             <Route path='/login' element={<Login />} />
             <Route path='/signup' element={<SignUp />} />
             <Route path='/add-data' element={<AddData />} />
-            <Route path='load-result' element={<LoadResult />} />
+            <Route path='/load-result' element={<LoadResult />} />
+            <Route path='/result' element={<ListResult />} />
           </Routes>
         </App>
       </Router>

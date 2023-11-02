@@ -1,9 +1,10 @@
 import React, { useRef, useEffect, useState } from 'react'
 
 import * as faceapi from 'face-api.js'
+import ProgressBar from '@ramonak/react-progress-bar'
 import VideoCamera from './VideoCamera/VideoCamera'
 
-function FaceDetectionComponent() {
+function FaceDetectionComponent({ props }) {
   const [errorState, setErrorState] = useState(false)
 
   const videoRef = useRef(null)
@@ -12,7 +13,9 @@ function FaceDetectionComponent() {
   async function getCameraStream() {
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
       try {
-        const stream = await navigator.mediaDevices.getUserMedia({ video: { width: 1280, height: 720 } })
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { width: 1280, height: 720 },
+        })
         videoRef.current.srcObject = stream
         videoRef.current.onloadedmetadata = () => {
           videoRef.current.play()
@@ -26,21 +29,21 @@ function FaceDetectionComponent() {
   }
 
   async function getApiCamera() {
-    await faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL);
-    await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);
+    await faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL)
+    await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL)
 
-    await getCameraStream();
+    await getCameraStream()
   }
 
   const handlePlaying = () => {
     setInterval(async () => {
-      const detections = await faceapi
-        .detectAllFaces(videoRef.current, new faceapi.TinyFaceDetectorOptions())
+      const detections = await faceapi.detectAllFaces(
+        videoRef.current,
+        new faceapi.TinyFaceDetectorOptions()
+      )
       console.log(detections)
-      if (detections.length !== 0)
-        setErrorState(false)
-      else
-        setErrorState(true)
+      if (detections.length !== 0) setErrorState(false)
+      else setErrorState(true)
     }, 1000)
   }
 
@@ -58,12 +61,26 @@ function FaceDetectionComponent() {
 
   useEffect(() => {
     getApiCamera()
-    console.log("call again api")
+    console.log('call again api')
   })
 
   return (
     <>
       <VideoCamera errorState={errorState} videoRef={videoRef} />
+      {errorState ? (
+        <p>Please keep your face still in the camera </p>
+      ) : (
+        <ProgressBar
+          completed={100}
+          maxCompleted={100}
+          height='25px'
+          bgColor='#e71e50'
+          isLabelVisible={false}
+          animateOnRender={true}
+          initCompletedOnAnimation={10}
+          transitionDuration='20s'
+        />
+      )}
     </>
   )
 }

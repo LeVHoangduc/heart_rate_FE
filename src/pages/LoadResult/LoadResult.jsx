@@ -24,7 +24,6 @@ const LoadResult = () => {
           </div>
 
           <FaceDetectionComponent />
-
           <h3>We are analyzing your measurement</h3>
         </div>
       </div>

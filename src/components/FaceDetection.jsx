@@ -4,7 +4,7 @@ import * as faceapi from 'face-api.js'
 import ProgressBar from '@ramonak/react-progress-bar'
 import VideoCamera from './VideoCamera/VideoCamera'
 
-function FaceDetectionComponent({ props }) {
+function FaceDetectionComponent() {
   const [errorState, setErrorState] = useState(false)
 
   const videoRef = useRef(null)
@@ -54,7 +54,16 @@ function FaceDetectionComponent({ props }) {
 
     return () => {
       if (videoRef.current) {
-        videoRef.current.removeEventListener('play', handlePlaying)
+        console.log("run")
+        videoRef.current.removeEventListener('play', handlePlaying)      
+        const stream = videoRef.current.srcObject;
+        console.log("stream",stream)
+       if(stream){
+        const tracks = stream.getTracks();
+        console.log("tracks",tracks)
+        tracks.forEach((track) => track.stop());
+        videoRef.current.srcObject = null;
+       }
       }
     }
   }, [])

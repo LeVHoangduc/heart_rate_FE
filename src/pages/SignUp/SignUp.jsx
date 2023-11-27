@@ -6,8 +6,8 @@ import API from '../../constants/api/API'
 import { ValidationRegister } from '../../validation/validationForm'
 
 const SignUp = () => {
-  const [data, setData] = React.useState({ username: '', password: '', confirmPassword: '', email: '' })
-  const [error, setError] = React.useState({ username: '', password: '', confirmPassword: '', email: '', signup: '' })
+  const [data, setData] = React.useState({ username: '', password: '', confirmPassword: '', email: '', first_name: '', last_name: '' })
+  const [error, setError] = React.useState({ username: '', password: '', confirmPassword: '', email: '', first_name: '', last_name: '', signup: '' })
 
   let navigate = useNavigate()
 
@@ -35,16 +35,16 @@ const SignUp = () => {
     e.preventDefault()
     const fieldCheck = ValidationRegister(data)
 
-
     if (isValidation(fieldCheck)) {
       setError('')
-      const data_json = {
-        username: data.username,
-        password: data.password,
-        email: data.email
-      }
+      const formdata = new FormData()
+      formdata.append('username', data.username)
+      formdata.append('password', data.password)
+      formdata.append('first_name', data.first_name)
+      formdata.append('last_name', data.last_name)
+      formdata.append('email', data.email)
 
-      API.post('/user/register', data_json)
+      API.post('register', formdata)
         .then((res) => {
           res.status === 200 && navigate('/login')
           console.log(res)
@@ -97,6 +97,20 @@ const SignUp = () => {
             required
           />
           <p className={style.form__error}>{error.email}</p>
+          <input
+            type='text'
+            name='first_name'
+            placeholder='First Name'
+            onChange={handleChange}
+          />
+          <p className={style.form__error}>{error.first_name}</p>
+          <input
+            type='text'
+            name='last_name'
+            placeholder='Last Name'
+            onChange={handleChange}
+          />
+          <p className={style.form__error}>{error.last_name}</p>
           <p className={style.form__link}>
             Already have an account ? <Link to='/login'>Login</Link>
           </p>

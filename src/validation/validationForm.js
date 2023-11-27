@@ -55,14 +55,15 @@ export const ValidationLogin = (userData) => {
 
 export const ValidationRegister = (data) => {
 
-    console.log(data)
     let fieldCheck = []
 
     const dataCheck = {
         username: data.username,
         password: data.password,
         confirmPassword: data.confirmPassword,
-        email: data.email
+        email: data.email,
+        first_name: data.first_name,
+        last_name: data.last_name,
     }
 
     for (const key in dataCheck) {
@@ -99,6 +100,18 @@ export const ValidationRegister = (data) => {
             let confirmData = dataCheck[key]
 
             confirmData === passwordCurrent ? isValidField = true : isValidField = false
+        }
+
+        if (key === Field.first_name) {
+            isValidField = Regex.first_name.test(value)
+            messageRequired = Message.firstNameRequired
+            messageInvalid = Message.invalidFirstName
+        }
+
+        if (key === Field.last_name) {
+            isValidField = Regex.last_name.test(value)
+            messageRequired = Message.lastNameRequired
+            messageInvalid = Message.invalidLastName
         }
 
         if (value.trim() === "") {

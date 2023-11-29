@@ -4,7 +4,7 @@ import * as faceapi from 'face-api.js'
 import ProgressBar from '@ramonak/react-progress-bar'
 import VideoCamera from './VideoCamera/VideoCamera'
 
-const FaceDetectionComponent = forwardRef((props, ref) => {
+const FaceDetectionComponent = (props) => {
   const [errorState, setErrorState] = useState(false)
   const [recordedChunks, setRecordedChunks] = useState([]);
 
@@ -84,23 +84,23 @@ const FaceDetectionComponent = forwardRef((props, ref) => {
     }, 1000)
   };
 
-  useImperativeHandle(ref, () => ({
-    stopVideoRecording: () => {
-      if (videoRef.current && videoRef.current.state === "recording") {
-        videoRef.current.stop();
+  let { cancelState } = props;
+  if(cancelState) {
+    if (videoRef.current && videoRef.current.state === "recording") {
+      videoRef.current.stop();
 
-        const stream = detectionRef.current.srcObject;
-        if (stream) {
-          const tracks = stream.getTracks();
-          tracks.forEach(track => track.stop());
-        }
-        if (intervalRef.current) {
-          clearInterval(intervalRef.current);
-          intervalRef.current = null;
-        }
+      const stream = detectionRef.current.srcObject;
+      if (stream) {
+        const tracks = stream.getTracks();
+        tracks.forEach(track => track.stop());
+      }
+      
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
       }
     }
-  }));
+  }
 
   useEffect(() => {
     if (detectionRef.current) {
@@ -145,6 +145,6 @@ const FaceDetectionComponent = forwardRef((props, ref) => {
       )}
     </>
   )
-});
+};
 
 export default FaceDetectionComponent

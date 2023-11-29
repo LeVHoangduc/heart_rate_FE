@@ -1,19 +1,16 @@
 import style from './LoadResult.module.css'
 
-import React, { useRef } from 'react'
+import React, { useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import FaceDetectionComponent from '../../components/FaceDetection'
 
 const LoadResult = () => {
-  const faceDetectionRef = useRef(null);
+  const [cancelState, setCancelState] = useState(false);
   const navigator = useNavigate();
   const handleCancel = () => {
-    if (faceDetectionRef.current) {
-      faceDetectionRef.current.stopVideoRecording();
-    }
+    setCancelState(true);
     navigator(-1);
-    console.log('cancel');
   };
   return (
     <div className={style.page}>
@@ -33,7 +30,7 @@ const LoadResult = () => {
               </div>
             </div>
           </div>
-          <FaceDetectionComponent ref={faceDetectionRef} />
+          <FaceDetectionComponent cancelState={cancelState} />
           <h3>We are analyzing your measurement</h3>
         </div>
       </div>

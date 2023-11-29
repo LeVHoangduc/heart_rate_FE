@@ -1,13 +1,14 @@
-import React, { useRef, useEffect, useState } from 'react'
+import React, { useRef, useEffect, useState, useImperativeHandle, forwardRef } from 'react'
 import axios from 'axios';
 import * as faceapi from 'face-api.js'
 import ProgressBar from '@ramonak/react-progress-bar'
 import VideoCamera from './VideoCamera/VideoCamera'
 
-function FaceDetectionComponent() {
+const FaceDetectionComponent = forwardRef((props, ref) => {
   const [errorState, setErrorState] = useState(false)
   const [recordedChunks, setRecordedChunks] = useState([]);
 
+  const intervalRef = useRef(null);
   const videoRef = useRef(null)
   const detectionRef = useRef(null)
 
@@ -31,7 +32,6 @@ function FaceDetectionComponent() {
           setRecordedChunks(recordedChunks.push(event.data));
 
         };
-
 
         videoRef.current.onloadedmetadata = () => {
           videoRef.current.play()
@@ -64,17 +64,16 @@ function FaceDetectionComponent() {
       .catch(err => {
         console.log(`The following error occurred: ${err.name}`)
       })
-  }
+  };
 
   async function getApiCamera() {
     await faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL)
     await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL)
-
     await getCameraStream()
-  }
+  };
 
   const handlePlaying = () => {
-    setInterval(async () => {
+    intervalRef.current = setInterval(async () => {
       const detections = await faceapi.detectAllFaces(
         detectionRef.current,
         new faceapi.TinyFaceDetectorOptions()
@@ -83,13 +82,30 @@ function FaceDetectionComponent() {
       if (detections.length !== 0) setErrorState(false)
       else setErrorState(true)
     }, 1000)
-  }
+  };
+
+  useImperativeHandle(ref, () => ({
+    stopVideoRecording: () => {
+      if (videoRef.current && videoRef.current.state === "recording") {
+        videoRef.current.stop();
+
+        const stream = detectionRef.current.srcObject;
+        if (stream) {
+          const tracks = stream.getTracks();
+          tracks.forEach(track => track.stop());
+        }
+        if (intervalRef.current) {
+          clearInterval(intervalRef.current);
+          intervalRef.current = null;
+        }
+      }
+    }
+  }));
 
   useEffect(() => {
     if (detectionRef.current) {
       detectionRef.current.addEventListener('play', handlePlaying)
     }
-
     return () => {
       if (detectionRef.current) {
         console.log("run")
@@ -104,22 +120,17 @@ function FaceDetectionComponent() {
         }
       }
     }
-  }, [])
-
-  // useEffect(() => {
-  //   setTimeout()
-  // }, [errorState])
+  }, []);
 
   useEffect(() => {
     getApiCamera()
-    console.log('call again api')
-  })
+  }, []);
 
   return (
     <>
       <VideoCamera errorState={errorState} videoRef={detectionRef} />
       {errorState ? (
-        <p>Please keep your face still in the camera </p>
+        <p style={{ textAlign: 'center' }}>Please keep your face still in the camera </p>
       ) : (
         <ProgressBar
           completed={100}
@@ -134,6 +145,6 @@ function FaceDetectionComponent() {
       )}
     </>
   )
-}
+});
 
 export default FaceDetectionComponent

@@ -86,6 +86,9 @@ const Login = () => {
           <button type='submit' name='submit' className={style.form__button}>
             Login
           </button>
+          <button type='button' className={style.button_add} onClick={() => navigate('/add-data')}>
+            Add Data without Login
+          </button>
         </form>
 
       </div>

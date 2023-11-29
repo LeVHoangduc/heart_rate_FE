@@ -1,31 +1,69 @@
 import React, { useRef, useEffect, useState } from 'react'
-
+import axios from 'axios';
 import * as faceapi from 'face-api.js'
 import ProgressBar from '@ramonak/react-progress-bar'
 import VideoCamera from './VideoCamera/VideoCamera'
 
 function FaceDetectionComponent() {
   const [errorState, setErrorState] = useState(false)
+  const [recordedChunks, setRecordedChunks] = useState([]);
 
   const videoRef = useRef(null)
+  const detectionRef = useRef(null)
+
   const MODEL_URL = '/models'
 
-  async function getCameraStream() {
-    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: { width: 1280, height: 720 },
-        })
-        videoRef.current.srcObject = stream
+  function getCameraStream() {
+    console.log('getCameraStream')
+
+    navigator.mediaDevices.getUserMedia({
+      video: { width: 1280, height: 720 }
+    })
+      .then((stream) => {
+        detectionRef.current.srcObject = stream
+        console.log('videoRef.current before', videoRef.current)
+
+        videoRef.current = new MediaRecorder(stream);
+        console.log('videoRef.current after', videoRef.current)
+
+        videoRef.current.ondataavailable = event => {
+          console.log('recordedChunks', recordedChunks, typeof recordedChunks)
+          setRecordedChunks(recordedChunks.push(event.data));
+
+        };
+
+
         videoRef.current.onloadedmetadata = () => {
           videoRef.current.play()
         }
-      } catch (err) {
-        console.error(`The following error occurred: ${err.name}`)
-      }
-    } else {
-      console.log('getUserMedia not supported')
-    }
+
+        videoRef.current.onstop = () => {
+          const blob = new Blob(recordedChunks, { type: 'video/webm' });
+          const formData = new FormData();
+
+          console.log('blob', blob)
+
+          formData.append('user_id', 1);
+          formData.append('video_file', blob);
+
+          axios.post('http://127.0.0.1:8000/api/model/', formData)
+            .then(response => {
+              console.log(response.data);
+            })
+            .catch(error => {
+              console.error(error);
+            });
+
+          setRecordedChunks([]);
+        }
+
+        videoRef.current.start();
+        console.log('start')
+        setTimeout(() => { videoRef.current.stop() }, 30000)
+      })
+      .catch(err => {
+        console.log(`The following error occurred: ${err.name}`)
+      })
   }
 
   async function getApiCamera() {
@@ -38,35 +76,39 @@ function FaceDetectionComponent() {
   const handlePlaying = () => {
     setInterval(async () => {
       const detections = await faceapi.detectAllFaces(
-        videoRef.current,
+        detectionRef.current,
         new faceapi.TinyFaceDetectorOptions()
       )
-      console.log(detections)
+
       if (detections.length !== 0) setErrorState(false)
       else setErrorState(true)
     }, 1000)
   }
 
   useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.addEventListener('play', handlePlaying)
+    if (detectionRef.current) {
+      detectionRef.current.addEventListener('play', handlePlaying)
     }
 
     return () => {
-      if (videoRef.current) {
+      if (detectionRef.current) {
         console.log("run")
-        videoRef.current.removeEventListener('play', handlePlaying)      
-        const stream = videoRef.current.srcObject;
-        console.log("stream",stream)
-       if(stream){
-        const tracks = stream.getTracks();
-        console.log("tracks",tracks)
-        tracks.forEach((track) => track.stop());
-        videoRef.current.srcObject = null;
-       }
+        detectionRef.current.removeEventListener('play', handlePlaying)
+        const stream = detectionRef.current.srcObject;
+        console.log("stream", stream)
+        if (stream) {
+          const tracks = stream.getTracks();
+          console.log("tracks", tracks)
+          tracks.forEach((track) => track.stop());
+          detectionRef.current.srcObject = null;
+        }
       }
     }
   }, [])
+
+  // useEffect(() => {
+  //   setTimeout()
+  // }, [errorState])
 
   useEffect(() => {
     getApiCamera()
@@ -75,7 +117,7 @@ function FaceDetectionComponent() {
 
   return (
     <>
-      <VideoCamera errorState={errorState} videoRef={videoRef} />
+      <VideoCamera errorState={errorState} videoRef={detectionRef} />
       {errorState ? (
         <p>Please keep your face still in the camera </p>
       ) : (
@@ -87,7 +129,7 @@ function FaceDetectionComponent() {
           isLabelVisible={false}
           animateOnRender={true}
           initCompletedOnAnimation={10}
-          transitionDuration='20s'
+          transitionDuration='30s'
         />
       )}
     </>

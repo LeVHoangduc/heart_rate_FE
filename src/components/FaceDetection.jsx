@@ -4,7 +4,7 @@ import ProgressBar from '@ramonak/react-progress-bar'
 
 import React, { useRef, useEffect, useState } from 'react'
 
-import useUserContext from '../../hooks/useUserContext'
+import useUserContext from '../hooks/useUserContext'
 
 import VideoCamera from './VideoCamera/VideoCamera'
 

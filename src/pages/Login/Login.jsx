@@ -19,18 +19,23 @@ const Login = () => {
     let isValid = true
     let error = {}
     fields.forEach(field => {
-      if (!field.isValid) {
+      if (!field.isValidField) {
         isValid = false
         error[field.field] = field.message
       }
     })
     setError(error)
+
+    console.log(isValid)
+
     return isValid
   }
 
   const handleSubmit = e => {
     e.preventDefault()
     const fieldCheck = ValidationLogin(data)
+
+    console.log(fieldCheck)
 
     if (isValidation(fieldCheck)) {
       setError('')

@@ -4,10 +4,11 @@ import style from './Login.module.css'
 import API from '../../constants/api/API'
 import { Link, useNavigate } from 'react-router-dom'
 import { ValidationLogin } from '../../validation/validationForm'
+import axios from 'axios'
 
 const Login = () => {
-  const [data, setData] = React.useState({ email: '', password: '' })
-  const [error, setError] = React.useState({ email: '', password: '', login: '' })
+  const [data, setData] = React.useState({ username: '', password: '' })
+  const [error, setError] = React.useState({ username: '', password: '', login: '' })
 
   let navigate = useNavigate()
 
@@ -41,18 +42,22 @@ const Login = () => {
       setError('')
 
       const data_json = {
-        email: data.email,
+        username: data.username,
         password: data.password,
       }
 
-      API.post('/user/login', data_json)
-        .then(res => {
-          if (res.status === 200) {
-            navigate('/home')
+      console.log(data_json)
 
+      axios.post('http://127.0.0.1:8000/api/login/', data_json)
+        .then(res => {
+
+          if (res.status === 200) {
+            console.log('200')
+            navigate('/home')
             localStorage.setItem('user', JSON.stringify(data_json))
+          } else {
+            setError({ login: res.data.message })
           }
-          setError({ login: res.data.message })
 
           console.log(res)
         })
@@ -75,8 +80,8 @@ const Login = () => {
         <form className={style.form} onSubmit={handleSubmit} noValidate>
           <h2 className={style.form__header}>Login Details</h2>
           <input
-            type='email'
-            name='email'
+            type='username'
+            name='username'
             className={style.form__username}
             placeholder='Username, email & phone number'
             onChange={handleChange}

@@ -7,7 +7,7 @@ export const ValidationLogin = (userData) => {
     let fieldCheck = []
 
     const userCheck = {
-        email: userData.email,
+        username: userData.username,
         password: userData.password,
     }
 
@@ -19,9 +19,9 @@ export const ValidationLogin = (userData) => {
         let messageRequired = ""
         let messageInvalid = ""
 
-        if (key === Field.email) {
-            isValidField = Regex.email.test(value)
-            messageRequired = Message.emailRequired
+        if (key === Field.username) {
+            isValidField = Regex.username.test(value)
+            messageRequired = Message.usernameRequired
             messageInvalid = Message.invalidEmail
         }
         if (key === Field.password) {

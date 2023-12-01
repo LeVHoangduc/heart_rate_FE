@@ -1,14 +1,20 @@
-import React, { useRef, useEffect, useState, useImperativeHandle, forwardRef } from 'react'
-import axios from 'axios';
+import axios from 'axios'
 import * as faceapi from 'face-api.js'
 import ProgressBar from '@ramonak/react-progress-bar'
+
+import React, { useRef, useEffect, useState } from 'react'
+
+import useUserContext from '../../hooks/useUserContext'
+
 import VideoCamera from './VideoCamera/VideoCamera'
 
-const FaceDetectionComponent = (props) => {
-  const [errorState, setErrorState] = useState(false)
-  const [recordedChunks, setRecordedChunks] = useState([]);
+const FaceDetectionComponent = props => {
+  const user = useUserContext()
 
-  const intervalRef = useRef(null);
+  const [errorState, setErrorState] = useState(false)
+  const [recordedChunks, setRecordedChunks] = useState([])
+
+  const intervalRef = useRef(null)
   const videoRef = useRef(null)
   const detectionRef = useRef(null)
 
@@ -17,60 +23,67 @@ const FaceDetectionComponent = (props) => {
   function getCameraStream() {
     console.log('getCameraStream')
 
-    navigator.mediaDevices.getUserMedia({
-      video: { width: 1280, height: 720 }
-    })
-      .then((stream) => {
+    navigator.mediaDevices
+      .getUserMedia({
+        video: { width: 1280, height: 720 },
+      })
+      .then(stream => {
         detectionRef.current.srcObject = stream
         console.log('videoRef.current before', videoRef.current)
 
-        videoRef.current = new MediaRecorder(stream);
+        videoRef.current = new MediaRecorder(stream)
         console.log('videoRef.current after', videoRef.current)
 
         videoRef.current.ondataavailable = event => {
           console.log('recordedChunks', recordedChunks, typeof recordedChunks)
-          setRecordedChunks(recordedChunks.push(event.data));
-
-        };
+          setRecordedChunks(recordedChunks.push(event.data))
+        }
 
         videoRef.current.onloadedmetadata = () => {
           videoRef.current.play()
         }
 
         videoRef.current.onstop = () => {
-          const blob = new Blob(recordedChunks, { type: 'video/webm' });
-          const formData = new FormData();
+          const blob = new Blob(recordedChunks, { type: 'video/webm' })
+          const formData = new FormData()
 
           console.log('blob', blob)
 
-          formData.append('user_id', 1);
-          formData.append('video_file', blob);
+          formData.append('user_id', user.id)
+          formData.append('video_file', blob)
 
-          axios.post('http://127.0.0.1:8000/api/model/', formData)
+          axios
+            .post('http://127.0.0.1:8000/api/model/', formData)
             .then(response => {
-              console.log(response.data);
+              console.log(response.data)
             })
             .catch(error => {
-              console.error(error);
-            });
+              console.error(error)
+            })
 
-          setRecordedChunks([]);
+          setRecordedChunks([])
         }
 
-        videoRef.current.start();
+        videoRef.current.start()
         console.log('start')
-        setTimeout(() => { videoRef.current.stop() }, 30000)
+
+        if (!errorState) {
+          setTimeout(() => {
+            videoRef.current.stop()
+          }, 30000)
+        }
       })
       .catch(err => {
         console.log(`The following error occurred: ${err.name}`)
       })
-  };
+  }
 
   async function getApiCamera() {
     await faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL)
     await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL)
-    await getCameraStream()
-  };
+
+    getCameraStream()
+  }
 
   const handlePlaying = () => {
     intervalRef.current = setInterval(async () => {
@@ -79,25 +92,27 @@ const FaceDetectionComponent = (props) => {
         new faceapi.TinyFaceDetectorOptions()
       )
 
-      if (detections.length !== 0) setErrorState(false)
+      if (detections.length === 1) setErrorState(false)
       else setErrorState(true)
     }, 1000)
-  };
+  }
 
-  let { cancelState } = props;
-  if(cancelState) {
-    if (videoRef.current && videoRef.current.state === "recording") {
-      videoRef.current.stop();
+  // Cancel button
+  let { cancelState } = props
+  if (cancelState) {
+    if (videoRef.current && videoRef.current.state === 'recording') {
+      videoRef.current.stop()
 
-      const stream = detectionRef.current.srcObject;
+      const stream = detectionRef.current.srcObject
+
       if (stream) {
-        const tracks = stream.getTracks();
-        tracks.forEach(track => track.stop());
+        const tracks = stream.getTracks()
+        tracks.forEach(track => track.stop())
       }
-      
+
       if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
+        clearInterval(intervalRef.current)
+        intervalRef.current = null
       }
     }
   }
@@ -106,25 +121,25 @@ const FaceDetectionComponent = (props) => {
     if (detectionRef.current) {
       detectionRef.current.addEventListener('play', handlePlaying)
     }
+
     return () => {
       if (detectionRef.current) {
-        console.log("run")
         detectionRef.current.removeEventListener('play', handlePlaying)
-        const stream = detectionRef.current.srcObject;
-        console.log("stream", stream)
+        const stream = detectionRef.current.srcObject
+
         if (stream) {
-          const tracks = stream.getTracks();
-          console.log("tracks", tracks)
-          tracks.forEach((track) => track.stop());
-          detectionRef.current.srcObject = null;
+          const tracks = stream.getTracks()
+
+          tracks.forEach(track => track.stop())
+          detectionRef.current.srcObject = null
         }
       }
     }
-  }, []);
+  }, [])
 
   useEffect(() => {
     getApiCamera()
-  }, []);
+  }, [])
 
   return (
     <>
@@ -145,6 +160,6 @@ const FaceDetectionComponent = (props) => {
       )}
     </>
   )
-};
+}
 
 export default FaceDetectionComponent

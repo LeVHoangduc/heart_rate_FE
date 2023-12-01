@@ -2,14 +2,16 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
+import UserContextProvider from './contexts/userContext'
+
 const App = ({ children }) => {
   App.propTypes = {
-    children: PropTypes.node.isRequired
+    children: PropTypes.node.isRequired,
   }
   return (
-    <div>
-      {children}
-    </div>
+    <UserContextProvider>
+      <div>{children}</div>
+    </UserContextProvider>
   )
 }
 export default App

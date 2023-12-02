@@ -8,10 +8,12 @@ import FaceDetectionComponent from '../../components/FaceDetection'
 const LoadResult = () => {
   const [cancelState, setCancelState] = useState(false);
   const navigator = useNavigate();
+
   const handleCancel = () => {
     setCancelState(true);
     navigator(-1);
   };
+  
   return (
     <div className={style.page}>
       <div className={style.container}>

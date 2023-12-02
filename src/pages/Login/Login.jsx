@@ -47,13 +47,10 @@ const Login = () => {
         password: data.password,
       }
 
-      const formData = new FormData()
-
-      formData.append("username",data.username)
-      formData.append("password",data.password)
+     
 
 
-      axios.post('http://192.168.20.164:8000/api/login/', formData)
+      axios.post('http://192.168.20.164:8000/api/login/', data_json)
         .then(res => {
 
           if (res.status === 200) {

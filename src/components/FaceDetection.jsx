@@ -7,6 +7,7 @@ import React, { useRef, useEffect, useState } from 'react'
 import useUserContext from '../hooks/useUserContext'
 
 import VideoCamera from './VideoCamera/VideoCamera'
+import { Navigate } from 'react-router-dom'
 
 const FaceDetectionComponent = props => {
   const user = useUserContext()
@@ -53,7 +54,7 @@ const FaceDetectionComponent = props => {
           formData.append('video_file', blob)
 
           axios
-            .post('http://127.0.0.1:8000/api/model/', formData)
+            .post('http://192.168.20.164:8000/api/model/', formData)
             .then(response => {
               console.log(response.data)
             })
@@ -70,6 +71,10 @@ const FaceDetectionComponent = props => {
         if (!errorState) {
           setTimeout(() => {
             videoRef.current.stop()
+
+            // after record video
+
+            Navigate('/result')
           }, 30000)
         }
       })

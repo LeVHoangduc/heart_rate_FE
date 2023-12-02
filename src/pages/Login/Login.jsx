@@ -6,6 +6,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { ValidationLogin } from '../../validation/validationForm'
 import axios from 'axios'
 
+
 const Login = () => {
   const [data, setData] = React.useState({ username: '', password: '' })
   const [error, setError] = React.useState({ username: '', password: '', login: '' })
@@ -46,23 +47,31 @@ const Login = () => {
         password: data.password,
       }
 
-      console.log(data_json)
+      const formData = new FormData()
 
-      axios.post('http://127.0.0.1:8000/api/login/', data_json)
+      formData.append("username",data.username)
+      formData.append("password",data.password)
+
+
+      axios.post('http://192.168.20.164:8000/api/login/', formData)
         .then(res => {
 
           if (res.status === 200) {
-            console.log('200')
+    
             navigate('/home')
             localStorage.setItem('user', JSON.stringify(data_json))
+
+            console.log("save")
+            
           } else {
+            console.log('!200')
             setError({ login: res.data.message })
           }
 
           console.log(res)
         })
         .catch(err => {
-          console.log(err)
+          console.log("err",err)
         })
     }
   }

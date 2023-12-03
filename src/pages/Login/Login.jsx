@@ -55,16 +55,20 @@ const Login = () => {
       axios.post('http://192.168.20.164:8000/api/login/', data_json)
         .then(res => {
           if (res.status === 200) {
-            console.log('200')
+    
             navigate('/home')
             localStorage.setItem('user', JSON.stringify(data_json))
+
+            console.log("save")
+            
           } else {
+            console.log('!200')
             setError({ login: res.data.message })
           }
           console.log(res)
         })
         .catch(err => {
-          console.log(err)
+          console.log("err",err)
         })
     }
   }

@@ -6,7 +6,7 @@ import { Swiper, SwiperSlide } from 'swiper/react'
 import { Pagination } from 'swiper/modules'
 import 'swiper/css'
 import 'swiper/css/pagination'
-import DataResult from './DataReult'
+import DataResult from './DataResult'
 
 const ListResult = () => {
   let navigate = useNavigate()

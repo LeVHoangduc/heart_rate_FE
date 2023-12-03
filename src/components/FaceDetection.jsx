@@ -9,6 +9,8 @@ import useUserContext from '../hooks/useUserContext'
 import VideoCamera from './VideoCamera/VideoCamera'
 import { Navigate } from 'react-router-dom'
 
+import {PATH_URL} from "../constants/values"
+
 const FaceDetectionComponent = props => {
   const user = useUserContext()
   let cancelStateProp = props.cancelState;
@@ -54,8 +56,10 @@ const FaceDetectionComponent = props => {
           formData.append('user_id', user.id ? user.id : 1)
           formData.append('video_file', blob)
 
+          console.log("form",formData)
+
           axios
-            .post('http://192.168.20.164:8000/api/model/', formData)
+            .post(PATH_URL+'model/', formData)
             .then(response => {
               console.log(response.data)
               localStorage.setItem('result', JSON.stringify(response.data))
@@ -77,12 +81,11 @@ const FaceDetectionComponent = props => {
           setTimeout(() => {
             videoRef.current.stop()
           }, 60000)
-
         }
-      })
-      .catch(err => {
+      }).catch(err => {
         console.log(`The following error occurred: ${err.name}`)
       })
+    
   }
 
   async function getApiCamera() {

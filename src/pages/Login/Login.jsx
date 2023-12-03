@@ -5,6 +5,7 @@ import API from '../../constants/api/API'
 import { Link, useNavigate } from 'react-router-dom'
 import { ValidationLogin } from '../../validation/validationForm'
 import axios from 'axios'
+import { PATH_URL } from '../../constants/values'
 import useUserContext from '../../hooks/useUserContext'
 
 const Login = () => {
@@ -52,14 +53,18 @@ const Login = () => {
         password: data.password
       }
 
-      axios.post('http://192.168.20.164:8000/api/login/', data_json)
+      axios.post(PATH_URL+'login/', data_json)
         .then(res => {
           if (res.status === 200) {
     
             navigate('/home')
-            localStorage.setItem('user', JSON.stringify(data_json))
+
+            const data = {...data_json,id:res.data.user_info.id}
+
+            localStorage.setItem('user', JSON.stringify(data))
 
             console.log("save")
+            console.log(data)
             
           } else {
             console.log('!200')

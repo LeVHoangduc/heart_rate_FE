@@ -56,7 +56,6 @@ const FaceDetectionComponent = props => {
 
           axios
             .post('http://192.168.20.164:8000/api/model/', formData)
-            .post('http://192.168.20.164:8000/api/model/', formData)
             .then(response => {
               console.log(response.data)
               localStorage.setItem('result', JSON.stringify(response.data))

@@ -1,16 +1,22 @@
 /* eslint-disable prettier/prettier */
-import React from 'react'
+import React, { useContext, useEffect } from 'react'
 import style from './Login.module.css'
 import API from '../../constants/api/API'
 import { Link, useNavigate } from 'react-router-dom'
 import { ValidationLogin } from '../../validation/validationForm'
 import axios from 'axios'
+import useUserContext from '../../hooks/useUserContext'
 
 const Login = () => {
   const [data, setData] = React.useState({ username: '', password: '' })
   const [error, setError] = React.useState({ username: '', password: '', login: '' })
 
-  let navigate = useNavigate()
+  let navigate = useNavigate();
+  const user = useUserContext();
+  useEffect(() => {
+
+    user && navigate('/home')
+  }, [])
 
   const handleChange = e => {
     setData({ ...data, [e.target.name]: e.target.value })
@@ -43,14 +49,11 @@ const Login = () => {
 
       const data_json = {
         username: data.username,
-        password: data.password,
+        password: data.password
       }
 
-      console.log(data_json)
-
-      axios.post('http://127.0.0.1:8000/api/login/', data_json)
+      axios.post('http://192.168.20.164:8000/api/login/', data_json)
         .then(res => {
-
           if (res.status === 200) {
             console.log('200')
             navigate('/home')
@@ -58,7 +61,6 @@ const Login = () => {
           } else {
             setError({ login: res.data.message })
           }
-
           console.log(res)
         })
         .catch(err => {

@@ -1,6 +1,6 @@
 import style from './LoadResult.module.css'
 
-import React, { useRef, useState } from 'react'
+import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import FaceDetectionComponent from '../../components/FaceDetection'

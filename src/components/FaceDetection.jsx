@@ -10,7 +10,8 @@ import VideoCamera from './VideoCamera/VideoCamera'
 
 const FaceDetectionComponent = props => {
   const user = useUserContext()
-
+  let cancelStateProp = props.cancelState;
+  const [cancelState, setCancelState] = useState(cancelStateProp);
   const [errorState, setErrorState] = useState(false)
   const [recordedChunks, setRecordedChunks] = useState([])
 
@@ -49,13 +50,17 @@ const FaceDetectionComponent = props => {
 
           console.log('blob', blob)
 
-          formData.append('user_id', user.id)
+          formData.append('user_id', user.id ? user.id : 1)
           formData.append('video_file', blob)
 
           axios
-            .post('http://127.0.0.1:8000/api/model/', formData)
+            .post('http://192.168.20.164:8000/api/model/', formData)
             .then(response => {
               console.log(response.data)
+              localStorage.setItem('result', JSON.stringify(response.data))
+              if (response.data) {
+                setCancelState(true);
+              }
             })
             .catch(error => {
               console.error(error)
@@ -70,7 +75,8 @@ const FaceDetectionComponent = props => {
         if (!errorState) {
           setTimeout(() => {
             videoRef.current.stop()
-          }, 30000)
+          }, 60000)
+
         }
       })
       .catch(err => {
@@ -97,26 +103,21 @@ const FaceDetectionComponent = props => {
     }, 1000)
   }
 
-  // Cancel button
-  let { cancelState } = props
-  if (cancelState) {
-    if (videoRef.current && videoRef.current.state === 'recording') {
-      videoRef.current.stop()
-
-      const stream = detectionRef.current.srcObject
-
-      if (stream) {
-        const tracks = stream.getTracks()
-        tracks.forEach(track => track.stop())
-      }
-
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current)
-        intervalRef.current = null
-      }
+  if (cancelStateProp || cancelState) {
+    videoRef.current.stop()
+    console.log('cancelState', cancelState)
+    const stream = detectionRef.current.srcObject
+    if (stream) {
+      const tracks = stream.getTracks()
+      tracks.forEach(track => track.stop())
+      console.log('stop')
     }
-  }
-
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current)
+      intervalRef.current = null
+      console.log('clearInterval')
+    }
+  };
   useEffect(() => {
     if (detectionRef.current) {
       detectionRef.current.addEventListener('play', handlePlaying)
@@ -155,7 +156,7 @@ const FaceDetectionComponent = props => {
           isLabelVisible={false}
           animateOnRender={true}
           initCompletedOnAnimation={10}
-          transitionDuration='30s'
+          transitionDuration='60s'
         />
       )}
     </>

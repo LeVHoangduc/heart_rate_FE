@@ -12,6 +12,8 @@ import AddData from './pages/AddData/AddData.jsx'
 import LoadResult from './pages/LoadResult/LoadResult.jsx'
 import ListResult from './pages/Result/ListResult.jsx'
 import Home from './pages/Home/Home.jsx'
+import InferenceGraph from './pages/Result/Chart.jsx'
+import Chart from './pages/Result/Chart.jsx'
 
 const rootElement = document.getElementById('root')
 if (rootElement) {
@@ -26,8 +28,7 @@ if (rootElement) {
           <Route path='/add-data' element={<AddData />} />
           <Route path='/load-result' element={<LoadResult />} />
           <Route path='/result' element={<ListResult />} />
-
-          {/* sau khi đăng nhập vào thì sẽ có 2 nút là coi trang result, đo nhịp tim hoặc là gọi bác sĩ */}
+          <Route path='/chart' element={<Chart/>} />
           <Route path='/home' element={<Home />} />
         </Routes>
       </App>

@@ -8,7 +8,7 @@ import 'swiper/css'
 import 'swiper/css/pagination'
 import DataResult from './DataResult'
 
-const ListResult = () => {
+const History = () => {
   let navigate = useNavigate()
   return (
     <div className={style.page}>
@@ -48,4 +48,4 @@ const ListResult = () => {
     </div>
   )
 }
-export default ListResult
+export default History

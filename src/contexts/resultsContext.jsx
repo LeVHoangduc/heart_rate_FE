@@ -4,18 +4,16 @@ import { createContext, useEffect, useState } from 'react'
 export const ResultsContext = createContext('')
 
 const ResultsContextProvider = ({ children }) => {
-  console.log('alo')
 
-  const [user, setUser] = useState('')
+  const [result, setResult] = useState(null)
 
   useEffect(() => {
-    const userData = localStorage.getItem('user')
-    console.log('user', userData)
-
-    userData && setUser(userData)
+    const resultData = JSON.parse(localStorage.getItem('result'))
+    
+    resultData && setResult(result)
   }, [])
 
-  return <ResultsContext.Provider value={user}>{children}</ResultsContext.Provider>
+  return <ResultsContext.Provider value={result}>{children}</ResultsContext.Provider>
 }
 
 export default ResultsContextProvider

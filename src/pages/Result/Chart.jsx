@@ -1,48 +1,19 @@
 import React from 'react';
-import { Line } from 'react-chartjs-2';
-import 'chart.js/auto';
+import InferenceGraph from './InferenceGraph';
 
-const InferenceGraph = ({ startPoint, length, inference }) => {
+const Chart = () => {
 
-  // Prepare the data for the chart
-  const data = {
-    labels: Array.from({ length: length }, (_, i) => i + startPoint),
-    datasets: [
-      {
-        label: 'Inference',
-        data: inference.slice(startPoint, startPoint + length),
-        // data: inference,
-        borderColor: 'rgb(75, 192, 192)',
-        tension: 0.1,
-      },
-    ],
+  // Giả định rằng chúng ta có một mảng `ecgData` chứa dữ liệu ECG.
+  const ecgData = new Array(1790).fill(null).map(() => Math.random());
+
+  // Đối tượng JSON chứa dữ liệu ECG, tỷ lệ tim và id người dùng.
+  const ecgObject = {
+    ecg: ecgData,
+    heartrate: 88,
+    user_id: '1'
   };
 
-  // Chart options
-  const options = {
-    responsive: true,
-    maintainAspectRatio: false,
-    scales: {
-      y: {
-        beginAtZero: true,
-      },
-    },
-  };
-
-  return <Line data={data} options={options} />;
-};
-
-
-const Chart = ()=> {
-    
-    const ecg = localStorage.getItem('result');
-    const ecgData = JSON.parse(ecg);
-
-    console.log(ecgData.ecg)
-
-    
-
-    return <InferenceGraph startPoint={0} length={ecgData.ecg.length} inference={ecgData.ecg} />;
+  return <InferenceGraph startPoint={0} length={ecgObject.ecg.length - 1750} inference={ecgObject.ecg} />;
 
 }
 export default Chart;

@@ -3,11 +3,18 @@ import style from './ListResult.module.css'
 import Icon from '@mdi/react'
 import { mdiHeartPulse, mdiStar, mdiClipboardPulse } from '@mdi/js'
 import ProgressBar from '@ramonak/react-progress-bar'
+import Chart from './Chart'
 
 const DataResult = ({ data }) => {
+
+  // const date = new Date(data.date);
+
   return (
     <div className={style.data_container}>
       <h2>20 / 11 / 2023</h2>
+      <div className={style.chart}>
+        <Chart />
+      </div>
       <div className={style.data_section}>
         <div className={style.data_item}>
           <Icon path={mdiHeartPulse} size={1} />

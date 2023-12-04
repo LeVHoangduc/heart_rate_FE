@@ -14,8 +14,8 @@ const Login = () => {
 
   let navigate = useNavigate();
   const user = useUserContext();
-  useEffect(() => {
 
+  useEffect(() => {
     user && navigate('/home')
   }, [])
 
@@ -33,8 +33,6 @@ const Login = () => {
       }
     })
     setError(error)
-
-    console.log(isValid)
 
     return isValid
   }

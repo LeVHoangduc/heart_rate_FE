@@ -10,10 +10,11 @@ import Login from './pages/Login/Login.jsx'
 import SignUp from './pages/SignUp/SignUp.jsx'
 import AddData from './pages/AddData/AddData.jsx'
 import LoadResult from './pages/LoadResult/LoadResult.jsx'
-import ListResult from './pages/Result/ListResult.jsx'
+import ListResult from './pages/Result/History.jsx'
 import Home from './pages/Home/Home.jsx'
 import InferenceGraph from './pages/Result/Chart.jsx'
 import Chart from './pages/Result/Chart.jsx'
+import ResultPage from './pages/Result/ResultPage.jsx'
 
 const rootElement = document.getElementById('root')
 if (rootElement) {
@@ -27,8 +28,9 @@ if (rootElement) {
           <Route path='/signup' element={<SignUp />} />
           <Route path='/add-data' element={<AddData />} />
           <Route path='/load-result' element={<LoadResult />} />
-          <Route path='/result' element={<ListResult />} />
-          <Route path='/chart' element={<Chart/>} />
+          <Route path='/history' element={<ListResult />} />
+          <Route path='/result' element={<ResultPage/>} />
+          <Route path='/chart' element={<Chart />} />
           <Route path='/home' element={<Home />} />
         </Routes>
       </App>

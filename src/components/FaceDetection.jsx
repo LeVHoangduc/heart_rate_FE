@@ -1,15 +1,11 @@
 import axios from 'axios'
 import * as faceapi from 'face-api.js'
 import ProgressBar from '@ramonak/react-progress-bar'
-
 import React, { useRef, useEffect, useState } from 'react'
-
 import useUserContext from '../hooks/useUserContext'
-
 import VideoCamera from './VideoCamera/VideoCamera'
-import { Navigate } from 'react-router-dom'
-
-import {PATH_URL} from "../constants/values"
+import { useNavigate } from 'react-router-dom'
+import { PATH_URL } from "../constants/values"
 
 const FaceDetectionComponent = props => {
   const user = useUserContext()
@@ -23,6 +19,8 @@ const FaceDetectionComponent = props => {
   const detectionRef = useRef(null)
 
   const MODEL_URL = '/models'
+
+  const navigater = useNavigate();
 
   function getCameraStream() {
     console.log('getCameraStream')
@@ -53,13 +51,13 @@ const FaceDetectionComponent = props => {
 
           console.log('blob', blob)
 
-          formData.append('user_id', user.id ? user.id : 1)
+          formData.append('user_id', user ? user.id : 1)
           formData.append('video_file', blob)
 
-          console.log("form",formData)
+          console.log("form", formData)
 
           axios
-            .post(PATH_URL+'model/', formData)
+            .post(PATH_URL + 'model/', formData)
             .then(response => {
               console.log(response.data)
               localStorage.setItem('result', JSON.stringify(response.data))
@@ -80,12 +78,12 @@ const FaceDetectionComponent = props => {
         if (!errorState) {
           setTimeout(() => {
             videoRef.current.stop()
-          }, 60000)
+          }, 32000)
         }
       }).catch(err => {
         console.log(`The following error occurred: ${err.name}`)
       })
-    
+
   }
 
   async function getApiCamera() {
@@ -143,8 +141,11 @@ const FaceDetectionComponent = props => {
   }, [])
 
   useEffect(() => {
-    getApiCamera()
-  }, [])
+    if(user){
+      getApiCamera()
+      console.log("user useEffect", user)
+    }
+  }, [user])
 
   return (
     <>
@@ -160,7 +161,7 @@ const FaceDetectionComponent = props => {
           isLabelVisible={false}
           animateOnRender={true}
           initCompletedOnAnimation={10}
-          transitionDuration='60s'
+          transitionDuration='32s'
         />
       )}
     </>

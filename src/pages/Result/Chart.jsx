@@ -13,7 +13,7 @@ const Chart = () => {
     user_id: '1'
   };
 
-  return <InferenceGraph startPoint={0} length={ecgObject.ecg.length - 1750} inference={ecgObject.ecg} />;
+  return <InferenceGraph startPoint={0} length={ecgObject.ecg.length - 1740} inference={ecgObject.ecg} />;
 
 }
 export default Chart;

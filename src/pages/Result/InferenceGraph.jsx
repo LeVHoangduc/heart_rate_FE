@@ -9,9 +9,12 @@ const InferenceGraph = ({ startPoint, length, inference }) => {
         labels: Array.from({ length: length }, (_, i) => i + startPoint),
         datasets: [
             {
-                label: 'ECG',
                 data: inference.slice(startPoint, startPoint + length),
                 borderColor: '#e71e50',
+                borderWidth: 3,
+                fill: false,
+                cubicInterpolationMode: 'monotone',
+                tension: 0.5,
                 pointStyle: false,
             },
         ],
@@ -63,7 +66,7 @@ const InferenceGraph = ({ startPoint, length, inference }) => {
             legend: false,
             title: {
                 display: true,
-                text: () => easing.name
+                text: 'ECG Inference',
             }
         },
         scales: {

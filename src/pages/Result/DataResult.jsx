@@ -1,9 +1,10 @@
 import React from 'react'
 import style from './ListResult.module.css'
 import Icon from '@mdi/react'
-import { mdiHeartPulse, mdiStar, mdiClipboardPulse } from '@mdi/js'
+import { mdiHeartPulse, mdiWater, mdiLungs } from '@mdi/js'
 import ProgressBar from '@ramonak/react-progress-bar'
 import Chart from './Chart'
+import breath from '../../assets/images/noun-lung-3968038.svg'
 
 const DataResult = ({ data }) => {
 
@@ -17,37 +18,37 @@ const DataResult = ({ data }) => {
       </div>
       <div className={style.data_section}>
         <div className={style.data_item}>
+          <Icon path={mdiLungs} size={1} />
+          <p>Respiration</p>
+          <div className={`${style.data_circle_overlay} ${style.yellow_overlay}`}>
+            <div className={`${style.data_circle}  ${style.yellow}`}>
+              <strong>17</strong>BPM
+            </div>
+          </div>
+        </div>
+        <div className={style.data_item}>
           <Icon path={mdiHeartPulse} size={1} />
-          <p>Pulse</p>
-          <div className={`${style.data_circle_overlay} ${style.red_overlay}`}>
-            <div className={`${style.data_circle} ${style.red}`}>
-              <strong>90</strong>BPM
-            </div>
-          </div>
-        </div>
-        <div className={style.data_item}>
-          <Icon path={mdiStar} size={1} />
-          <p>Heart Score</p>
+          <p>Heart Rate</p>
           <div
-            className={`${style.data_circle_overlay} ${style.center_overlay} ${style.yellow_overlay}`}
+            className={`${style.data_circle_overlay} ${style.center_overlay} ${style.red_overlay}`}
           >
-            <div className={`${style.data_circle} ${style.yellow} ${style.center}`}>
-              <strong>90</strong>/100
+            <div className={`${style.data_circle} ${style.red} ${style.center}`}>
+              <strong>70</strong>BPM
             </div>
           </div>
         </div>
         <div className={style.data_item}>
-          <Icon path={mdiClipboardPulse} size={1} />
-          <p>HRV</p>
+          <Icon path={mdiWater} size={1} />
+          <p>SpO2</p>
           <div className={`${style.data_circle_overlay} ${style.green_overlay}`}>
             <div className={`${style.data_circle} ${style.green}`}>
-              <strong>90</strong>ms
+              <strong>97</strong>%
             </div>
           </div>
         </div>
       </div>
       <p className={style.data_description}>
-        Comment about heart comment about heart comment about heart
+        Heart Arrythmia: Normal Beat
       </p>
       <div className={style.data_status_container}>
         <div className={style.data_status_item}>

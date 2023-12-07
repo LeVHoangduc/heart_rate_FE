@@ -2,11 +2,14 @@
 import React from 'react'
 
 import UserContextProvider from './contexts/userContext'
+import ResultsContextProvider, { ResultsContext } from './contexts/resultsContext'
 
 const App = ({ children }) => {
   return (
     <UserContextProvider>
-      <div>{children}</div>
+      <ResultsContextProvider>
+        <div>{children}</div>
+      </ResultsContextProvider>
     </UserContextProvider>
   )
 }

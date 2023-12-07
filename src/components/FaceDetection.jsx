@@ -6,6 +6,7 @@ import useUserContext from '../hooks/useUserContext'
 import VideoCamera from './VideoCamera/VideoCamera'
 import { useNavigate } from 'react-router-dom'
 import { PATH_URL } from "../constants/values"
+import useResultsContext from '../hooks/useResultsContext'
 
 const FaceDetectionComponent = props => {
   const user = useUserContext()
@@ -13,16 +14,18 @@ const FaceDetectionComponent = props => {
   const [cancelState, setCancelState] = useState(cancelStateProp);
   const [errorState, setErrorState] = useState(false)
   const [recordedChunks, setRecordedChunks] = useState([])
-
+  const { setResult } = useResultsContext();
   const intervalRef = useRef(null)
   const videoRef = useRef(null)
   const detectionRef = useRef(null)
+  const timeoutRef = useRef();
 
   const MODEL_URL = '/models'
 
   const navigater = useNavigate();
 
   function getCameraStream() {
+
     console.log('getCameraStream')
 
     navigator.mediaDevices
@@ -56,13 +59,16 @@ const FaceDetectionComponent = props => {
 
           console.log("form", formData)
 
+          setCancelState(true);
+
           axios
             .post(PATH_URL + 'model/', formData)
             .then(response => {
-              console.log(response.data)
-              localStorage.setItem('result', JSON.stringify(response.data))
               if (response.data) {
-                setCancelState(true);
+                console.log('response', response.data)
+                localStorage.setItem('result', JSON.stringify(response.data))
+                setResult(response.data)
+                navigater('/result')
               }
             })
             .catch(error => {
@@ -75,21 +81,41 @@ const FaceDetectionComponent = props => {
         videoRef.current.start()
         console.log('start')
 
-        if (!errorState) {
-          setTimeout(() => {
-            videoRef.current.stop()
-          }, 32000)
-        }
+        
+
+        console.log('errorState', errorState)
       }).catch(err => {
         console.log(`The following error occurred: ${err.name}`)
       })
 
   }
 
+  useEffect(() => {
+    if (!errorState) {
+      console.log('bi stop');
+      // Set the timeout and store the ID in the ref
+      timeoutRef.current = setTimeout(() => {
+        videoRef.current && videoRef.current.stop();
+      }, 32000);
+    } else {
+      // Clear the timeout if errorState is true
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    }
+
+    // Clear the timeout when the component unmounts or errorState changes
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, [errorState]);
+
   async function getApiCamera() {
     await faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL)
     await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL)
-
+    console.log('getApiCamera')
     getCameraStream()
   }
 
@@ -106,6 +132,7 @@ const FaceDetectionComponent = props => {
   }
 
   if (cancelStateProp || cancelState) {
+    console.log('cancelStateProp', cancelStateProp, 'cancelState', cancelState)
     videoRef.current.stop()
     console.log('cancelState', cancelState)
     const stream = detectionRef.current.srcObject
@@ -120,8 +147,10 @@ const FaceDetectionComponent = props => {
       console.log('clearInterval')
     }
   };
+
   useEffect(() => {
     if (detectionRef.current) {
+      console.log('add event listener')
       detectionRef.current.addEventListener('play', handlePlaying)
     }
 
@@ -141,7 +170,7 @@ const FaceDetectionComponent = props => {
   }, [])
 
   useEffect(() => {
-    if(user){
+    if (user) {
       getApiCamera()
       console.log("user useEffect", user)
     }

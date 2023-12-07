@@ -184,6 +184,10 @@
     border-radius: 10px;
     padding: 20px;
     margin-top: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
 }
 
 .data_status_item {
@@ -226,6 +230,13 @@
     width: 24px;
     height: 24px;
     fill: #596479;
+}
+.data_status_container canvas  {
+    position: unset !important;
+    transform: none !important;
+    width: 300px !important;
+    height: 300px !important;
+    object-fit: fill;
 }
 
 @media (min-width:1140px){

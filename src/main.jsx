@@ -15,6 +15,7 @@ import Home from './pages/Home/Home.jsx'
 import InferenceGraph from './pages/Result/Chart.jsx'
 import Chart from './pages/Result/Chart.jsx'
 import ResultPage from './pages/Result/ResultPage.jsx'
+import { PieChart } from './pages/Result/PieChart.jsx'
 
 const rootElement = document.getElementById('root')
 if (rootElement) {
@@ -30,7 +31,7 @@ if (rootElement) {
           <Route path='/load-result' element={<LoadResult />} />
           <Route path='/history' element={<ListResult />} />
           <Route path='/result' element={<ResultPage/>} />
-          <Route path='/chart' element={<Chart />} />
+          <Route path='/chart' element={<PieChart/>} />
           <Route path='/home' element={<Home />} />
         </Routes>
       </App>

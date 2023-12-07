@@ -21,7 +21,7 @@ const InferenceGraph = ({ startPoint, length, inference }) => {
     };
 
     let easing = easingEffects.easeOutQuad;
-    const totalDuration = 100000;
+    const totalDuration = 1000;
     const duration = (ctx) => easing(ctx.index / inference.length) * totalDuration / inference.length;
     const delay = (ctx) => easing(ctx.index / inference.length) * totalDuration;
     const previousY = (ctx) => ctx.index === 0 ? ctx.chart.scales.y.getPixelForValue(100) : ctx.chart.getDatasetMeta(ctx.datasetIndex).data[ctx.index - 1].getProps(['y'], true).y;

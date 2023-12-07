@@ -7,11 +7,11 @@ import Loading from '../../lazy/Loading'
 
 
 
-// const results = useResultsContext();
+
 
 function delayForDemo(promise) {
     return new Promise(resolve => {
-        setTimeout(resolve, 3000);
+        setTimeout(resolve, 1000);
     }).then(() => promise);
 };
 
@@ -19,19 +19,17 @@ const DataResult = lazy(() => delayForDemo(import('./DataResult')));
 
 const ResultPage = () => {
     const navigate = useNavigate();
+    const {result, setResult} = useResultsContext();
     return (
         <div className={style.page}>
             <div className={style.container}>
                 <HeaderBar />
-                {/* {results &&
-                    (<Suspense fallback={<Loading />}>
-                        <DataResult results={results} />
-                    </Suspense>)
-                } */}
                 <div className={style.loading_data}>
-                    <Suspense fallback={<Loading />}>
-                        <DataResult />
-                    </Suspense>
+                    {result &&
+                        (<Suspense fallback={<Loading />}>
+                            <DataResult results={result} />
+                        </Suspense>)
+                    }
                 </div>
                 <button className={style.button} onClick={() => navigate('/add-data')}>
                     Continue Measurement

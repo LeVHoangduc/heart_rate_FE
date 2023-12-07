@@ -3,10 +3,25 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  margin-top: 120px;
 }
-
 .header {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin: 40px 0;
+}
+.header img {
+  width: 70px;
+  margin-right: 20px;
+}
+.logoBk {
+  height: 60px;
+}
+.logoFast {
+  height: 50px;
+}
+.header_title {
   font-size: 30px;
   font-style: normal;
   font-weight: 700;

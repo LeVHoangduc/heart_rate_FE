@@ -1,9 +1,8 @@
 import style from './LoadResult.module.css'
-
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-
 import FaceDetectionComponent from '../../components/FaceDetection'
+import HeaderBar from '../../components/HeaderBar/HeaderBar'
 
 const LoadResult = () => {
   const [cancelState, setCancelState] = useState(false);
@@ -13,16 +12,11 @@ const LoadResult = () => {
     setCancelState(true);
     navigator(-1);
   };
-  
+
   return (
     <div className={style.page}>
       <div className={style.container}>
-        <div className={style.header}>
-          <a onClick={handleCancel}>
-            Cancel
-          </a>
-          <h3>Measuring</h3>
-        </div>
+        <HeaderBar />
         <div className={style.content}>
           <div className={style.header_content}>
             <h3>Just a few seconds</h3>
@@ -34,6 +28,9 @@ const LoadResult = () => {
           </div>
           <FaceDetectionComponent cancelState={cancelState} />
           <h3>We are analyzing your measurement</h3>
+          <button className={style.button} onClick={handleCancel}>
+            Cancel
+          </button>
         </div>
       </div>
     </div>

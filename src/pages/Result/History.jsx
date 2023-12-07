@@ -9,12 +9,12 @@ import 'swiper/css/pagination'
 import DataResult from './DataResult'
 
 const History = () => {
-  let navigate = useNavigate()
+  let navigate = useNavigate();
+  function renderData(){};
   return (
     <div className={style.page}>
       <div className={style.container}>
         <HeaderBar />
-        <h1>Your Heart Data</h1>
         <Swiper
           pagination={{
             dynamicBullets: true,

@@ -4,12 +4,9 @@ import Icon from '@mdi/react'
 import { mdiHeartPulse, mdiWater, mdiLungs } from '@mdi/js'
 import ProgressBar from '@ramonak/react-progress-bar'
 import Chart from './Chart'
-import breath from '../../assets/images/noun-lung-3968038.svg'
 
 const DataResult = ({ data }) => {
-
   // const date = new Date(data.date);
-
   return (
     <div className={style.data_container}>
       <h2>20 / 11 / 2023</h2>

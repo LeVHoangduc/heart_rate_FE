@@ -60,7 +60,6 @@ const FaceDetectionComponent = props => {
           console.log("form", formData)
 
           setCancelState(true);
-
           axios
             .post(PATH_URL + 'model/', formData)
             .then(response => {
@@ -100,6 +99,7 @@ const FaceDetectionComponent = props => {
     } else {
       // Clear the timeout if errorState is true
       if (timeoutRef.current) {
+        getCameraStream()
         clearTimeout(timeoutRef.current);
       }
     }

@@ -95,3 +95,16 @@
         transform: scale(1.2);
     }
 }
+
+
+@media(min-width:500px){
+    .start_measure {
+        width:46%;
+    }
+}
+@media(min-width:992px){
+    .start_measure {
+        width: 24%;
+    }
+}
+

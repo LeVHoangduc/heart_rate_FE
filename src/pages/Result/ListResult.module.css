@@ -13,7 +13,7 @@
 .container {
     margin: 0 auto;
     width: 85%;
-    max-width: 1200px;
+    max-width: 1000px;
 }
 
 .content {
@@ -65,7 +65,8 @@
 }
 
 .data_container {
-    width: 100%;
+   width: 100%;
+
     text-align: center;
     padding: 20px;
     background-color: #E2E6EE;
@@ -218,10 +219,20 @@
 .chart canvas {
     position: unset !important;
     transform: none !important;
+    width: 100%;
 }
 
 .breath_icon {
     width: 24px;
     height: 24px;
     fill: #596479;
+}
+
+@media (min-width:1140px){
+    .chart canvas {
+        max-width: 1000px;
+    }    
+    .data_container{
+        max-width: 1000px;
+    }
 }

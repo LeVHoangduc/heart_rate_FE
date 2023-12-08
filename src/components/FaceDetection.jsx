@@ -13,22 +13,25 @@ const FaceDetectionComponent = props => {
   let cancelStateProp = props.cancelState;
   const [cancelState, setCancelState] = useState(cancelStateProp);
   const [errorState, setErrorState] = useState(false)
-  const [recordedChunks, setRecordedChunks] = useState([])
   const { setResult } = useResultsContext();
   const intervalRef = useRef(null)
   const videoRef = useRef(null)
   const detectionRef = useRef(null)
   const timeoutRef = useRef();
+  const timeoutRef1 = useRef();
+  const [isFinish, setIsFinish] = useState(false)
 
   const MODEL_URL = '/models'
 
+  const [recordedChunks, setRecordedChunks] = useState([]);
+
   const navigater = useNavigate();
 
-  function getCameraStream() {
+  async function getCameraStream() {
 
     console.log('getCameraStream')
 
-    navigator.mediaDevices
+    await navigator.mediaDevices
       .getUserMedia({
         video: { width: 1280, height: 720 },
       })
@@ -40,8 +43,9 @@ const FaceDetectionComponent = props => {
         console.log('videoRef.current after', videoRef.current)
 
         videoRef.current.ondataavailable = event => {
-          console.log('recordedChunks', recordedChunks, typeof recordedChunks)
-          setRecordedChunks(recordedChunks.push(event.data))
+          if (event.data.size > 0) {
+            setRecordedChunks(prevChunks => [...prevChunks, event.data]);
+          }
         }
 
         videoRef.current.onloadedmetadata = () => {
@@ -49,38 +53,12 @@ const FaceDetectionComponent = props => {
         }
 
         videoRef.current.onstop = () => {
-          const blob = new Blob(recordedChunks, { type: 'video/webm' })
-          const formData = new FormData()
-
-          console.log('blob', blob)
-
-          formData.append('user_id', user ? user.id : 1)
-          formData.append('video_file', blob)
-
-          console.log("form", formData)
-
-          setCancelState(true);
-          axios
-            .post(PATH_URL + 'model/', formData)
-            .then(response => {
-              if (response.data) {
-                console.log('response', response.data)
-                localStorage.setItem('result', JSON.stringify(response.data))
-                setResult(response.data)
-                navigater('/result')
-              }
-            })
-            .catch(error => {
-              console.error(error)
-            })
-
-          setRecordedChunks([])
+          console.log('STOP!!!')
         }
-
-        videoRef.current.start()
-        console.log('start')
-
         
+        videoRef.current.onstart = () => {
+          console.log('START!!!')
+        }
 
         console.log('errorState', errorState)
       }).catch(err => {
@@ -90,17 +68,62 @@ const FaceDetectionComponent = props => {
   }
 
   useEffect(() => {
+    console.log('recordedChunks after update:', recordedChunks);
+  }, [recordedChunks]);
+
+  useEffect(() => {
+    if(isFinish) {
+      console.log('send',recordedChunks)
+
+    const blob = new Blob(recordedChunks, { type: 'video/webm' })
+    const formData = new FormData()
+
+    console.log('blob', blob)
+
+    formData.append('user_id', user ? user.id : 1)
+    formData.append('video_file', blob)
+
+    console.log("Sent to Server!!!", formData)
+
+    setCancelState(true);
+    axios
+      .post(PATH_URL + 'model/', formData)
+      .then(response => {
+        if (response.data) {
+          console.log('response', response.data)
+          localStorage.setItem('result', JSON.stringify(response.data))
+          setResult(response.data)
+          navigater('/result')
+        }
+      })
+      .catch(error => {
+        console.error(error)
+      })
+
+    }
+  }, [isFinish])
+
+
+  useEffect(() => {
     if (!errorState) {
-      console.log('bi stop');
+      setRecordedChunks([])
+      videoRef.current && videoRef.current.start(33);
+      console.log('error: ', errorState);
+      timeoutRef1.current = setTimeout(() => {
+        timeoutRef.current = setTimeout(async () => {
+        videoRef.current.stop();
+        setIsFinish(true)
+        }, 32000);
+      }, 2000)
       // Set the timeout and store the ID in the ref
-      timeoutRef.current = setTimeout(() => {
-        videoRef.current && videoRef.current.stop();
-      }, 32000);
+
     } else {
+      console.log('error: ', errorState);
+      videoRef.current.stop();
       // Clear the timeout if errorState is true
       if (timeoutRef.current) {
-        getCameraStream()
         clearTimeout(timeoutRef.current);
+        clearTimeout(timeoutRef1.current);
       }
     }
 
@@ -108,6 +131,7 @@ const FaceDetectionComponent = props => {
     return () => {
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
+        clearTimeout(timeoutRef1.current);
       }
     };
   }, [errorState]);
@@ -116,7 +140,8 @@ const FaceDetectionComponent = props => {
     await faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL)
     await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL)
     console.log('getApiCamera')
-    getCameraStream()
+    await getCameraStream()
+    videoRef.current.start(33)
   }
 
   const handlePlaying = () => {
@@ -170,18 +195,19 @@ const FaceDetectionComponent = props => {
   }, [])
 
   useEffect(() => {
-    if (user) {
-      getApiCamera()
-      console.log("user useEffect", user)
-    }
-  }, [user])
+
+    getApiCamera()
+
+  }, [])
+
+ 
 
   return (
     <>
       <VideoCamera errorState={errorState} videoRef={detectionRef} />
       {errorState ? (
-        <p style={{ textAlign: 'center' }}>Please keep your face still in the camera </p>
-      ) : (
+        <p style={{ textAlign: 'center' }}> Please keep your face still in the camera</p>
+      ) : ( !isFinish ? 
         <ProgressBar
           completed={100}
           maxCompleted={100}
@@ -191,7 +217,7 @@ const FaceDetectionComponent = props => {
           animateOnRender={true}
           initCompletedOnAnimation={10}
           transitionDuration='32s'
-        />
+        /> : <h3>Sending....</h3>
       )}
     </>
   )

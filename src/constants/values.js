@@ -1,1 +1,1 @@
-export const PATH_URL = 'http://192.168.20.164:8000/api/'
+export const PATH_URL = 'http://0.0.0.0:8000/api/'

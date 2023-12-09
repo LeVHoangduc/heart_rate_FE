@@ -34,7 +34,7 @@ export function PieChart() {
 
     return <><Pie data={data} />
         <p style={{ marginTop: '20px', fontWeight: 'bold', fontSize: '20px' }}>
-            Heart Arrythmia: {result.diagnostic.normal === 100 ? 'Normal' : 'Abnormal'}
+            Heart Arrythmia: {result && result.diagnostic.normal === 100 ? 'Normal' : 'Abnormal'}
         </p>
     </>;
 }
